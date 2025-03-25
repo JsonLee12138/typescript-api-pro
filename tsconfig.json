@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    // 基础配置
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+
+    // 类型检查配置
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+
+    // 模块解析配置
+    "moduleResolution": "node",
+    "types": ["node"],
+
+    // 因为是类型库，这些很重要
+    "noEmit": true,              // 不输出 JavaScript 文件
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "types/**/*.d.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
