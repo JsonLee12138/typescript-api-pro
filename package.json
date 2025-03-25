@@ -1,5 +1,5 @@
 {
-  "name": "type-kit",
+  "name": "ts-kit",
   "version": "0.0.1",
   "description": "A comprehensive TypeScript type utility library",
   "types": "types/index.d.ts",
