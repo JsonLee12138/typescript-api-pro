@@ -18,15 +18,10 @@
     "types": ["node"],
 
     // 因为是类型库，这些很重要
-    "noEmit": true,              // 不输出 JavaScript 文件
+    "noEmit": true, // 不输出 JavaScript 文件
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "types/**/*.d.ts",
-    "tests/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["types/**/*.d.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules"]
 }
