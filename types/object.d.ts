@@ -9,3 +9,5 @@ export type MutuallyWithObject<T extends AnyObject> = {
 }[keyof T]
 
 export type Mutually<T extends AnyObject, K extends keyof T, O extends keyof T> = Omit<T, K> | Omit<T, O>;
+
+export type Generic<R extends AnyObject, K extends keyof R, T> = R & { [P in K]: T };

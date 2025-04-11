@@ -53,7 +53,7 @@ const numObject: AnyObject<number> = {
 Creates a type where certain properties must either exist together or not exist at all.
 
 ```typescript
-type RequiredDependency<T, K extends keyof T, D extends keyof T> = 
+type RequiredDependency<T, K extends keyof T, D extends keyof T> =
   Omit<T, D> & (Partial<{ [P in K | D]: never }> | Required<Pick<T, K | D>>);
 ```
 
@@ -100,6 +100,156 @@ const config3: ServerConfig = {
 const config4: ServerConfig = {
   name: 'server4',
   port: 8080  // Error
+};
+```
+
+### MutuallyWithObject<T>
+Creates a mutually exclusive object type where only one property from the base type T can be present.
+
+```typescript
+type MutuallyWithObject<T extends AnyObject> = {
+  [K in keyof T]: { [P in K]: T[K] } & { [P in Exclude<keyof T, K>]?: never };
+}[keyof T]
+```
+
+#### Description
+- Ensures only one property from the specified set can exist in an object
+- Perfect for representing mutually exclusive options
+- Each property maintains its original type from T
+
+#### Example
+```typescript
+interface LoginOptions {
+  username: string;
+  email: string;
+  phone: number;
+}
+
+// Create a type that only allows one login method at a time
+type LoginMethod = MutuallyWithObject<LoginOptions>;
+
+// ✅ Valid: using only username
+const login1: LoginMethod = {
+  username: 'user123'
+};
+
+// ✅ Valid: using only email
+const login2: LoginMethod = {
+  email: 'user@example.com'
+};
+
+// ✅ Valid: using only phone
+const login3: LoginMethod = {
+  phone: 13812345678
+};
+
+// ❌ Invalid: cannot provide multiple properties
+const login4: LoginMethod = {
+  username: 'user123',
+  email: 'user@example.com'  // Error
+};
+```
+
+### Mutually<T, K, O>
+Creates a union type where either property K is absent or property O is absent.
+
+```typescript
+type Mutually<T extends AnyObject, K extends keyof T, O extends keyof T> = Omit<T, K> | Omit<T, O>;
+```
+
+#### Type Parameters
+- `T`: Base object type
+- `K`: First mutually exclusive property
+- `O`: Second mutually exclusive property
+
+#### Description
+- Ensures two specific properties cannot exist together in an object
+- Unlike MutuallyWithObject, other properties are allowed to coexist
+- Useful for handling mutual exclusivity between two specific properties
+
+#### Example
+```typescript
+interface FormData {
+  name: string;
+  age: number;
+  personalId?: string;
+  passportNumber?: string;
+}
+
+// Create a type where personal ID and passport number are mutually exclusive
+type IdentityFormData = Mutually<FormData, 'personalId', 'passportNumber'>;
+
+// ✅ Valid: providing personal ID, no passport number
+const data1: IdentityFormData = {
+  name: 'John',
+  age: 30,
+  personalId: '110101199001011234'
+};
+
+// ✅ Valid: providing passport number, no personal ID
+const data2: IdentityFormData = {
+  name: 'Jane',
+  age: 25,
+  passportNumber: 'G12345678'
+};
+
+// ✅ Valid: providing neither
+const data3: IdentityFormData = {
+  name: 'Alex',
+  age: 40
+};
+
+// ❌ Invalid: cannot provide both properties
+const data4: IdentityFormData = {
+  name: 'Sam',
+  age: 35,
+  personalId: '110101199001011234',
+  passportNumber: 'G12345678'  // Error
+};
+```
+
+### Generic<R, K, T>
+Creates a new type that inherits all properties from the base type R but overwrites the type of a specific property K with type T.
+
+```typescript
+type Generic<R extends AnyObject, K extends keyof R, T> = R & { [P in K]: T };
+```
+
+#### Type Parameters
+- `R`: Base object type
+- `K`: Property key whose type needs to be overwritten
+- `T`: New property type
+
+#### Description
+- Preserves all properties from the original type
+- Replaces just the type of the specified property
+- Useful for extending or specializing existing types
+
+#### Example
+```typescript
+interface User {
+  id: number;
+  name: string;
+  roles: string[];
+}
+
+// Create a new type that changes the roles property from string[] to a more specific Role[] type
+interface Role {
+  id: number;
+  name: string;
+  permissions: string[];
+}
+
+type EnhancedUser = Generic<User, 'roles', Role[]>;
+
+// ✅ Valid: roles is now of type Role[]
+const user: EnhancedUser = {
+  id: 1,
+  name: 'John',
+  roles: [
+    { id: 1, name: 'admin', permissions: ['read', 'write', 'delete'] },
+    { id: 2, name: 'editor', permissions: ['read', 'write'] }
+  ]
 };
 ```
 
