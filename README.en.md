@@ -1,4 +1,5 @@
-# API Reference
+# Typescript API Reference
+[中文文档](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.md)
 
 ## Types
 

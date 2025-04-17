@@ -1,4 +1,5 @@
-# API Reference
+# Typescript API 参考
+[English Document](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.en.md)
 
 ## Types
 
