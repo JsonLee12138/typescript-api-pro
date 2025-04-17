@@ -251,3 +251,80 @@ const user: EnhancedUser = {
   ]
 };
 ```
+
+### OmitByObject<T, U>
+从类型 T 中排除所有与类型 U 有相同键名的属性。
+
+```typescript
+type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>
+```
+
+#### Type Parameters
+- `T`: 源对象类型
+- `U`: 包含要排除键的对象类型
+
+#### Description
+- 根据另一个对象类型的键来排除源对象中的属性
+- 比标准的 `Omit` 更灵活，可以基于整个对象类型的结构来排除属性
+- 适用于需要从一个对象中剔除另一个对象结构的场景
+
+#### Example
+```typescript
+interface Person {
+  name: string;
+  age: number;
+  address: string;
+  phone: string;
+}
+
+interface ContactInfo {
+  address: string;
+  phone: string;
+  email: string;
+}
+
+// 创建一个不包含联系信息字段的个人信息类型
+type PersonalInfoOnly = OmitByObject<Person, ContactInfo>;
+
+// 等价于 { name: string; age: number; }
+const personalInfo: PersonalInfoOnly = {
+  name: '张三',
+  age: 30
+  // address 和 phone 属性已被排除，因为它们在 ContactInfo 中存在
+};
+
+// 另一个例子：排除通用元数据字段
+interface WithMetadata {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Product extends WithMetadata {
+  name: string;
+  price: number;
+  description: string;
+}
+
+// 只获取产品业务数据，不含元数据
+type ProductData = OmitByObject<Product, WithMetadata>;
+
+// 等价于 { name: string; price: number; description: string; }
+const productData: ProductData = {
+  name: '智能手机',
+  price: 3999,
+  description: '最新款智能手机'
+  // id、createdAt 和 updatedAt 已被排除
+};
+```
+
+## 📝 贡献指南
+欢迎提交`issue`或`pull request`，共同完善`Hook-Fetch`。
+
+## 📄 许可证
+
+MIT
+
+## 联系我们
+
+- [Discord](https://discord.gg/Ah55KD5d)

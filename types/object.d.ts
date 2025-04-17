@@ -11,3 +11,5 @@ export type MutuallyWithObject<T extends AnyObject> = {
 export type Mutually<T extends AnyObject, K extends keyof T, O extends keyof T> = Omit<T, K> | Omit<T, O>;
 
 export type Generic<R extends AnyObject, K extends keyof R, T> = R & { [P in K]: T };
+
+export type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>

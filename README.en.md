@@ -253,25 +253,79 @@ const user: EnhancedUser = {
 };
 ```
 
-## Usage Notes
+### OmitByObject<T, U>
+Exclude all properties from type T that have the same key names as those in type U.
 
-1. `PropertyKey` is commonly used when you need to type object keys or property accessors.
+```typescript
+type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>
+```
 
-2. `AnyObject<T>` is useful when:
-   - You need a type-safe object with consistent value types
-   - You want to allow any valid JavaScript property key
-   - You're working with dynamic property names
+#### Type Parameters
+- `T`: The source object type
+- `U`: The object type containing keys to be omitted
 
-3. `RequiredDependency<T, K, D>` is particularly helpful when:
-   - Building configuration interfaces
-   - Defining API request types
-   - Ensuring related properties are handled together
-   - Implementing conditional property requirements
+#### Description
+- Excludes properties from the source object based on the keys of another object type.
+- More flexible than the standard `Omit`, as it can omit properties based on the structure of an entire object type.
+- Useful when you need to remove properties from one object that are present in the structure of another object.
 
-## Best Practices
+#### Example
+```typescript
+interface Person {
+  name: string;
+  age: number;
+  address: string;
+  phone: string;
+}
 
-1. Use `PropertyKey` when you need to explicitly type object keys or property accessors.
+interface ContactInfo {
+  address: string;
+  phone: string;
+  email: string;
+}
 
-2. Use `AnyObject<T>` instead of `Record<string, T>` when you need to support all possible key types.
+// Create a type for personal information only, excluding contact info fields
+type PersonalInfoOnly = OmitByObject<Person, ContactInfo>;
 
-3. Use `RequiredDependency` to enforce property dependencies and create more type-safe interfaces.
+// Equivalent to { name: string; age: number; }
+const personalInfo: PersonalInfoOnly = {
+  name: 'Zhang San',
+  age: 30
+  // address and phone are omitted because they exist in ContactInfo
+};
+
+// Another example: Exclude common metadata fields
+interface WithMetadata {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Product extends WithMetadata {
+  name: string;
+  price: number;
+  description: string;
+}
+
+// Get only the business data of a product, excluding metadata
+type ProductData = OmitByObject<Product, WithMetadata>;
+
+// Equivalent to { name: string; price: number; description: string; }
+const productData: ProductData = {
+  name: 'Smartphone',
+  price: 3999,
+  description: 'The latest smartphone'
+  // id, createdAt, and updatedAt are omitted
+};
+```
+
+## 📝 Contribution Guide
+Feel free to submit `issues` or `pull requests` to help improve `Hook-Fetch`.
+
+## 📄 License
+
+MIT
+
+## Contact US
+
+- [Discord](https://discord.gg/Ah55KD5d)
