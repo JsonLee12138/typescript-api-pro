@@ -213,7 +213,7 @@ const data4: IdentityFormData = {
 Creates a new type that inherits all properties from the base type R but overwrites the type of a specific property K with type T.
 
 ```typescript
-type Generic<R extends AnyObject, K extends keyof R, T> = R & { [P in K]: T };
+type Generic<R extends AnyObject, K extends keyof R, T> = Omit<R, K> & { [P in K]: T };
 ```
 
 #### Type Parameters

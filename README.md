@@ -212,7 +212,7 @@ const data4: IdentityFormData = {
 创建一个新类型，继承基础类型 R 的所有属性，但将某个特定属性 K 的类型重写为 T。
 
 ```typescript
-type Generic<R extends AnyObject, K extends keyof R, T> = R & { [P in K]: T };
+type Generic<R extends AnyObject, K extends keyof R, T> = Omit<R, K> & { [P in K]: T };
 ```
 
 #### Type Parameters
