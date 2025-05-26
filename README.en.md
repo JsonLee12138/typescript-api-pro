@@ -320,6 +320,45 @@ const productData: ProductData = {
 };
 ```
 
+### ArrayItem<T>
+A utility type that extracts the element type from an array type.
+
+```typescript
+type ArrayItem<T extends any[]> = T[number];
+```
+
+#### Type Parameters
+- `T`: Any array type
+
+#### Description
+- Uses indexed access type `T[number]` to extract the element type from an array type
+- Can be used to get element types from arrays, tuples, or readonly arrays
+- Particularly useful when working with generic arrays, preserving specific type information of elements
+
+#### Example
+```typescript
+// Simple array type
+type NumberArray = number[];
+type NumberItem = ArrayItem<NumberArray>; // number
+
+// Tuple type
+type StringNumberTuple = [string, number];
+type TupleItem = ArrayItem<StringNumberTuple>; // string | number
+
+// Readonly array
+type ReadonlyStringArray = ReadonlyArray<string>;
+type ReadonlyItem = ArrayItem<ReadonlyStringArray>; // string
+
+// Generic array
+interface User {
+  id: number;
+  name: string;
+}
+
+type UserArray = User[];
+type UserItem = ArrayItem<UserArray>; // User
+```
+
 ## 📝 Contribution Guide
 Feel free to submit `issues` or `pull requests` to help improve `Hook-Fetch`.
 

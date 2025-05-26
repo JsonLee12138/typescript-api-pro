@@ -319,6 +319,54 @@ const productData: ProductData = {
 };
 ```
 
+### ArrayItem<T>
+从数组类型中提取元素类型的工具类型。
+
+```typescript
+export type ArrayItem<T extends any[]> = T[number];
+```
+
+#### Type Parameters
+- `T`: 任意数组类型
+
+#### Description
+- 使用索引访问类型 `T[number]` 从数组类型中提取元素类型
+- 可用于获取数组、元组或只读数组的元素类型
+- 在处理泛型数组时特别有用,可以保留元素的具体类型信息
+
+#### Example
+```typescript
+// 简单数组类型
+type NumberArray = number[];
+type NumberItem = ArrayItem<NumberArray>; // number
+
+// 对象数组
+interface User {
+  id: number;
+  name: string;
+}
+type UserArray = User[];
+type UserItem = ArrayItem<UserArray>; // User
+
+// 元组类型
+type Tuple = [string, number, boolean];
+type TupleItem = ArrayItem<Tuple>; // string | number | boolean
+
+// 实际使用示例
+const users: User[] = [
+  { id: 1, name: '张三' },
+  { id: 2, name: '李四' }
+];
+
+// 使用 ArrayItem 获取数组元素类型
+function processUser(user: ArrayItem<typeof users>) {
+  console.log(`处理用户: ${user.name}, ID: ${user.id}`);
+}
+
+// 可以直接传入数组元素
+processUser(users[0]); // 正确: 类型匹配
+```
+
 ## 📝 贡献指南
 欢迎提交`issue`或`pull request`，共同完善`Hook-Fetch`。
 
