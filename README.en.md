@@ -359,6 +359,54 @@ type UserArray = User[];
 type UserItem = ArrayItem<UserArray>; // User
 ```
 
+### ValueOf<T>
+Extracts a union type of all property values from an object type.
+
+```typescript
+type ValueOf<T> = T[keyof T];
+```
+
+#### Type Parameters
+- `T`: Any object type
+
+#### Description
+- Produces a union of all property value types of the object
+- Useful for type mapping, inference, and utility types
+
+#### Example
+```typescript
+interface StatusMap {
+  success: 200;
+  notFound: 404;
+  error: 500;
+}
+type StatusCode = ValueOf<StatusMap>; // 200 | 404 | 500
+```
+
+### KeyOf<T>
+Gets a union type of all property keys of an object.
+
+```typescript
+type KeyOf<T> = keyof T;
+```
+
+#### Type Parameters
+- `T`: Any object type
+
+#### Description
+- Equivalent to TypeScript's built-in `keyof` operator
+- Produces a union of all property names of the object
+
+#### Example
+```typescript
+interface User {
+  id: number;
+  name: string;
+  age: number;
+}
+type UserKeys = KeyOf<User>; // "id" | "name" | "age"
+```
+
 ## 📝 Contribution Guide
 Feel free to submit `issues` or `pull requests` to help improve `Hook-Fetch`.
 

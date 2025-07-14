@@ -367,6 +367,55 @@ function processUser(user: ArrayItem<typeof users>) {
 processUser(users[0]); // 正确: 类型匹配
 ```
 
+### ValueOf<T>
+从对象类型中提取所有属性值的联合类型。
+
+```typescript
+type ValueOf<T> = T[keyof T];
+```
+
+#### Type Parameters
+- `T`: 任意对象类型
+
+#### Description
+- 获取对象所有属性值的联合类型
+- 常用于类型映射、类型推导等场景
+
+#### Example
+```typescript
+interface StatusMap {
+  success: 200;
+  notFound: 404;
+  error: 500;
+}
+type StatusCode = ValueOf<StatusMap>; // 200 | 404 | 500
+```
+
+### KeyOf<T>
+获取对象所有属性键的联合类型。
+
+```typescript
+type KeyOf<T> = keyof T;
+```
+
+#### Type Parameters
+- `T`: 任意对象类型
+
+#### Description
+- 等价于 TypeScript 内置的 `keyof` 操作符
+- 用于获取对象所有属性名的联合类型
+
+#### Example
+```typescript
+interface User {
+  id: number;
+  name: string;
+  age: number;
+}
+type UserKeys = KeyOf<User>; // "id" | "name" | "age"
+```
+
+
 ## 📝 贡献指南
 欢迎提交`issue`或`pull request`，共同完善`Hook-Fetch`。
 

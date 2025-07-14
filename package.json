@@ -1,6 +1,6 @@
 {
   "name": "typescript-api-pro",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A comprehensive TypeScript type utility library",
   "types": "types/index.d.ts",
   "files": [
@@ -16,7 +16,9 @@
   },
   "scripts": {
     "test": "tsc --noEmit",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "ci:publish": "npm publish --access public",
+    "ci:beta": "npm publish --tag beta --access public"
   },
   "keywords": [
     "typescript",
