@@ -25,25 +25,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 写入 npm 登录凭证
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Install dependencies
-        run: |
-          npm i -g pnpm
-          pnpm install
-
-      - name: Build
-        run: |
-          pnpm build
 
       - name: Create Release Pull Request
         id: create_release
@@ -53,8 +38,8 @@ jobs:
         run: |
           if [[ "$TAG_NAME" == *beta* ]];then
             echo "发布beta版本"
-            pnpm ci:beta
+            npm run ci:beta
           else
             echo "发布release版本"
-            pnpm ci:publish
+            npm run ci:publish
           fi
