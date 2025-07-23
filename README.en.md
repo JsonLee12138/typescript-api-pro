@@ -407,6 +407,377 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+### MapKeyOf<T>
+Extracts the key type from a Map type.
+
+```typescript
+type MapKeyOf<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never;
+```
+
+#### Type Parameters
+- `T` : Any Map type
+
+#### Description
+- Uses conditional types and the `infer` keyword to extract the key type from a Map type
+- Returns a union type of all possible keys in the Map
+- Returns `never` if the input is not a Map type
+
+#### Example
+```typescript
+// Basic usage
+type StringNumberMap = Map<string, number>;
+type Keys = MapKeyOf<StringNumberMap>; // string
+
+// Union key type
+type UnionKeyMap = Map<string | number, boolean>;
+type UnionKeys = MapKeyOf<UnionKeyMap>; // string | number
+
+// Literal key type
+type LiteralMap = Map<'name' | 'age', string>;
+type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
+```
+
+### MapValueOf<T>
+Extracts the value type from a Map type.
+
+```typescript
+type MapValueOf<T extends Map<any, any>> = T extends Map<any, infer V> ? V : never;
+```
+
+#### Type Parameters
+- `T`: Any Map type
+
+#### Description
+- Extracts the value type from a Map type
+- Returns a union type of all possible values in the Map
+
+#### Example
+```typescript
+// Basic usage
+type StringNumberMap = Map<string, number>;
+type Values = MapValueOf<StringNumberMap>; // number
+
+// Union value type
+type UnionValueMap = Map<string, number | boolean>;
+type UnionValues = MapValueOf<UnionValueMap>; // number | boolean
+
+// Object value type
+interface User {
+  id: number;
+  name: string;
+}
+type UserMap = Map<string, User>;
+type UserValue = MapValueOf<UserMap>; // User
+```
+
+### MapToObject<T>
+Converts a Map type to an equivalent object type.
+
+```typescript
+type MapToObject<T extends Map<any, any>> = {
+    [K in MapKeyOf<T> & PropertyKey]: T extends Map<any, infer V> ? V : never;
+}
+```
+
+#### Type Parameters
+- `T`: Any Map type
+
+#### Description
+- Converts a Map type to an equivalent object type
+- Only works correctly when the Map's key type is a subset of `PropertyKey` (string | number | symbol)
+- Preserves the original key-value relationships
+
+#### Example
+```typescript
+// String key Map
+type StringMap = Map<'name' | 'age', string>;
+type StringObject = MapToObject<StringMap>; 
+// { name: string; age: string; }
+
+// Numeric key Map
+type NumberMap = Map<1 | 2 | 3, boolean>;
+type NumberObject = MapToObject<NumberMap>;
+// { 1: boolean; 2: boolean; 3: boolean; }
+
+// Practical example
+const userMap: Map<'id' | 'name', string> = new Map([
+  ['id', '123'],
+  ['name', 'John']
+]);
+
+// Converted object type
+type UserObject = MapToObject<typeof userMap>;
+// { id: string; name: string; }
+```
+
+### ObjectToMap<T>
+Converts an object type to an equivalent Map type.
+
+```typescript
+type ObjectToMap<T extends AnyObject> = Map<keyof T, T[keyof T]>;
+```
+
+#### Type Parameters
+- `T`: Object type inheriting from `AnyObject`
+
+#### Description
+- Converts an object type to an equivalent Map type
+- Uses object keys as Map keys and object values as Map values
+
+#### Example
+```typescript
+// Basic object conversion
+interface User {
+  id: number;
+  name: string;
+  active: boolean;
+}
+type UserMap = ObjectToMap<User>;
+// Map<'id' | 'name' | 'active', number | string | boolean>
+
+// Configuration object conversion
+interface Config {
+  host: string;
+  port: number;
+  ssl: boolean;
+}
+type ConfigMap = ObjectToMap<Config>;
+// Map<'host' | 'port' | 'ssl', string | number | boolean>
+```
+
+### OmitMapKey<T, K>
+Creates a new Map type excluding specified keys.
+
+```typescript
+type OmitMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
+  T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
+```
+
+#### Type Parameters
+- `T`: Object type inheriting from AnyObject
+- `K`: Keys to exclude (must exist in T)
+
+#### Description
+- Creates a new Map type excluding specified keys
+- Preserves the original value type while removing specified key types
+- Similar to the Omit utility type for object types
+
+#### Example
+```typescript
+// Exclude single key
+type OriginalMap = Map<'name' | 'age' | 'email', string>;
+type WithoutEmail = OmitMapKey<OriginalMap, 'email'>;
+// Map<'name' | 'age', string>
+
+// Exclude multiple keys (using union type)
+type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
+// Map<'email', string>
+```
+
+### PickMapKey<T, K>
+Creates a new Map type including only specified keys.
+
+```typescript
+export type PickMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
+  T extends Map<any, infer V> ? Map<K, V> : never;
+```
+
+#### Type Parameters
+- `T`: Object type inheriting from AnyObject
+- `K`: Keys to include (must exist in T)
+
+#### Description
+- Creates a new Map type including only specified keys
+- Preserves the original value type while selecting specific key types
+- Similar to the Pick utility type for object types
+
+#### Example
+```typescript
+// Select single key
+type OriginalMap = Map<'name' | 'age' | 'email', string>;
+type OnlyName = PickMapKey<OriginalMap, 'name'>;
+// Map<'name', string>
+
+// Select multiple keys
+type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
+// Map<'name' | 'age', string>
+```
+
+### SetValueOf<T>
+Extracts the element type from a Set type.
+
+```typescript
+type SetValueOf<T extends Set<any>> = T extends Set<infer V> ? V : never;
+```
+
+#### Type Parameters
+- `T`: Any Set type
+
+#### Description
+- Extracts the element type from a Set type using conditional types and `infer`
+- Returns a union type of all possible elements in the Set
+- Returns `never` if the input is not a Set type
+
+#### Example
+```typescript
+// Basic usage
+type StringSet = Set<string>;
+type StringElement = SetValueOf<StringSet>; // string
+
+// Union type elements
+type MixedSet = Set<string | number | boolean>;
+type MixedElement = SetValueOf<MixedSet>; // string | number | boolean
+
+// Literal type elements
+type LiteralSet = Set<'red' | 'green' | 'blue'>;
+type ColorElement = SetValueOf<LiteralSet>; // 'red' | 'green' | 'blue'
+
+// Object type elements
+interface User {
+  id: number;
+  name: string;
+}
+type UserSet = Set<User>;
+type UserElement = SetValueOf<UserSet>; // User
+```
+
+### OmitSetValue<T, V>
+Creates a new Set type excluding specified value types.
+
+```typescript
+type OmitSetValue<T extends Set<any>, V extends SetValueOf<T>> = 
+  T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
+```
+
+#### Type Parameters
+- `T`: Any Set type
+- `V`: Values to exclude (must exist in T)
+
+#### Description
+- Creates a new Set type excluding specified element types
+- Uses the Exclude utility type to remove specified types from the union
+- Useful for scenarios requiring removal of specific element types from Sets
+
+#### Example
+```typescript
+// Exclude single value type
+type OriginalSet = Set<'apple' | 'banana' | 'orange'>;
+type WithoutApple = OmitSetValue<OriginalSet, 'apple'>;
+// Set<'banana' | 'orange'>
+
+// Exclude multiple value types
+type WithoutFruits = OmitSetValue<OriginalSet, 'apple' | 'banana'>;
+// Set<'orange'>
+
+// Numeric example
+type NumberSet = Set<1 | 2 | 3 | 4 | 5>;
+type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
+// Set<2 | 4>
+```
+
+### PickSetValue<T, V>
+Creates a new Set type including only specified value types.
+
+```typescript
+type PickSetValue<T extends Set<any>, V extends SetValueOf<T>> = Set<V>;
+```
+
+#### Type Parameters
+- `T`: Any Set type
+- `V`: Values to include (must exist in T)
+
+#### Description
+- Creates a new Set type including only specified element types
+- Directly constructs a new Set with the specified value types
+- Useful for extracting specific element types from existing Sets
+
+#### Example
+```typescript
+// Select value types
+type OriginalSet = Set<'red' | 'green' | 'blue' | 'yellow'>;
+type PrimaryColors = PickSetValue<OriginalSet, 'red' | 'green' | 'blue'>;
+// Set<'red' | 'green' | 'blue'>
+
+// Numeric selection
+type NumberSet = Set<1 | 2 | 3 | 4 | 5>;
+type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
+// Set<2 | 4>
+```
+
+### ArrayToSet<T>
+Converts an array type to an equivalent Set type.
+
+```typescript
+type ArrayToSet<T extends any[]> = Set<T[number]>;
+```
+
+#### Type Parameters
+- T: Any array type
+
+#### Description
+- Converts an array type to an equivalent Set type
+- Uses indexed access type `T[number]` to extract element types
+- Automatically deduplicates repeating element types
+
+#### Example
+```typescript
+// Basic array conversion
+type StringArray = string[];
+type StringSet = ArrayToSet<StringArray>; // Set<string>
+
+// Tuple conversion
+type ColorTuple = ['red', 'green', 'blue', 'red'];
+type ColorSet = ArrayToSet<ColorTuple>; // Set<'red' | 'green' | 'blue'>
+
+// Union type array
+type MixedArray = (string | number)[];
+type MixedSet = ArrayToSet<MixedArray>; // Set<string | number>
+
+// Practical example
+const fruits = ['apple', 'banana', 'apple', 'orange'] as const;
+type FruitSet = ArrayToSet<typeof fruits>;
+// Set<'apple' | 'banana' | 'orange'>
+```
+
+### SetToArray<T>
+Converts a Set type to an equivalent array type.
+
+```typescript
+type SetToArray<T extends Set<any>> = SetValueOf<T>[];
+```
+
+#### Type Parameters
+- `T`: Any array type
+
+#### Description
+- Converts a Set type to an equivalent array type
+- Extracts element types using SetValueOf and creates an array type
+- Provides the inverse operation of ArrayToSet
+
+#### Example
+```typescript
+// Basic Set conversion
+type StringSet = Set<string>;
+type StringArray = SetToArray<StringSet>; // string[]
+
+// Literal Set conversion
+type ColorSet = Set<'red' | 'green' | 'blue'>;
+type ColorArray = SetToArray<ColorSet>; // ('red' | 'green' | 'blue')[]
+
+// Object Set conversion
+interface User {
+  id: number;
+  name: string;
+}
+type UserSet = Set<User>;
+type UserArray = SetToArray<UserSet>; // User[]
+
+// Practical example
+function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
+  return Array.from(set) as SetToArray<T>;
+}
+```
+
 ## 📝 Contribution Guide
 Feel free to submit `issues` or `pull requests` to help improve `Hook-Fetch`.
 
