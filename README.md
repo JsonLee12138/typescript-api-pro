@@ -519,14 +519,14 @@ type UserObject = MapToObject<typeof userMap>;
 ```
 
 ### ObjectToMap<T>
-将 Map 类型转换为对象类型。
+将对象型转换为Map类型。
 
 ```typescript
 type ObjectToMap<T extends AnyObject> = Map<keyof T, T[keyof T]>;
 ```
 
 #### Type Parameters
-- `T` : 继承自 `AnyObject` 的对象类型
+- `T` : 任意继承自 `AnyObject` 的对象类型
 
 #### Description
 - 将对象类型转换为等价的 Map 类型
