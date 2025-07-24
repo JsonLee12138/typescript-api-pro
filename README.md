@@ -415,6 +415,375 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+### MapKeyOf<T>
+从 Map 类型中提取键类型。
+
+```typescript
+type MapKeyOf<T extends Map<unknown, unknown>> = T extends Map<infer K, unknown> ? K : never;
+```
+
+#### Type Parameters
+- `T` : 任意 Map 类型
+
+#### Description
+- 使用条件类型和 infer 关键字从 Map 类型中提取键的类型
+- 返回 Map 中所有可能键的联合类型
+- 如果传入的不是 Map 类型，则返回 `never`
+
+#### Example
+```typescript
+// 基础用法
+type StringNumberMap = Map<string, number>;
+type Keys = MapKeyOf<StringNumberMap>; // string
+
+// 联合键类型
+type UnionKeyMap = Map<string | number, boolean>;
+type UnionKeys = MapKeyOf<UnionKeyMap>; // string | number
+
+// 字面量键类型
+type LiteralMap = Map<'name' | 'age', string>;
+type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
+```
+
+### MapValueOf<T>
+从 Map 类型中提取值类型。
+
+```typescript
+type MapValueOf<T extends Map<unknown, unknown>> = T extends Map<unknown, infer V> ? V : never;
+```
+
+#### Type Parameters
+- `T` : 任意 Map 类型
+
+#### Description
+- 从 Map 类型中提取值的类型
+- 返回 Map 中所有可能值的联合类型
+
+#### Example
+```typescript
+// 基础用法
+type StringNumberMap = Map<string, number>;
+type Values = MapValueOf<StringNumberMap>; // number
+
+// 联合值类型
+type UnionValueMap = Map<string, number | boolean>;
+type UnionValues = MapValueOf<UnionValueMap>; // number | boolean
+
+// 对象值类型
+interface User {
+  id: number;
+  name: string;
+}
+type UserMap = Map<string, User>;
+type UserValue = MapValueOf<UserMap>; // User
+```
+
+### MapToObject<T>
+将 Map 类型转换为对象类型。
+
+```typescript
+type MapToObject<T extends Map<unknown, unknown>> = {
+    [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
+}
+```
+
+#### Type Parameters
+- `T` : 任意 Map 类型
+
+#### Description
+- 将 Map 类型转换为等价的对象类型
+- 只有当 Map 的键类型是 PropertyKey`（string | number | symbol）`的子集时才能正确转换
+- 保持键值对应关系不变
+
+#### Example
+```typescript
+// 字符串键的 Map
+type StringMap = Map<'name' | 'age', string>;
+type StringObject = MapToObject<StringMap>; 
+// { name: string; age: string; }
+
+// 数字键的 Map
+type NumberMap = Map<1 | 2 | 3, boolean>;
+type NumberObject = MapToObject<NumberMap>;
+// { 1: boolean; 2: boolean; 3: boolean; }
+
+// 实际使用示例
+const userMap: Map<'id' | 'name', string> = new Map([
+  ['id', '123'],
+  ['name', '张三']
+]);
+
+// 转换后的对象类型
+type UserObject = MapToObject<typeof userMap>;
+// { id: string; name: string; }
+```
+
+### ObjectToMap<T>
+将对象型转换为Map类型。
+
+```typescript
+type ObjectToMap<T extends AnyObject> = Map<keyof T, T[keyof T]>;
+```
+
+#### Type Parameters
+- `T` : 任意继承自 `AnyObject` 的对象类型
+
+#### Description
+- 将对象类型转换为等价的 Map 类型
+- 对象的键成为 Map 的键类型，对象的值成为 Map 的值类型
+
+#### Example
+```typescript
+// 基础对象转换
+interface User {
+  id: number;
+  name: string;
+  active: boolean;
+}
+type UserMap = ObjectToMap<User>;
+// Map<'id' | 'name' | 'active', number | string | boolean>
+
+// 配置对象转换
+interface Config {
+  host: string;
+  port: number;
+  ssl: boolean;
+}
+type ConfigMap = ObjectToMap<Config>;
+// Map<'host' | 'port' | 'ssl', string | number | boolean>
+```
+### OmitMapKey<T, K>
+从 Map 类型中排除指定键的。
+
+```typescript
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+  T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
+```
+
+#### Type Parameters
+- `T` : 继承自 AnyObject 的对象类型
+- `K` : 要排除的键，必须是 T 中存在的键类型
+
+#### Description
+- 创建一个新的 Map 类型，排除指定的键
+- 保持值类型不变，只移除指定的键类型
+- 类似于对象类型的 Omit 工具类型
+
+#### Example
+```typescript
+// 排除单个键
+type OriginalMap = Map<'name' | 'age' | 'email', string>;
+type WithoutEmail = OmitMapKey<OriginalMap, 'email'>;
+// Map<'name' | 'age', string>
+
+// 排除多个键（使用联合类型）
+type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
+// Map<'email', string>
+```
+
+### PickMapKey<T, K>
+从 Map 类型中选择指定键的。
+
+```typescript
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+  T extends Map<unknown, infer V> ? Map<K, V> : never;
+```
+
+#### Type Parameters
+- `T` : 继承自 `AnyObject` 的对象类型
+- `K` : 要排除的键，必须是 `T` 中存在的键类型
+
+#### Description
+- 创建一个新的 Map 类型，只包含指定的键
+- 保持值类型不变，只保留指定的键类型
+- 类似于对象类型的 Pick 工具类型
+
+#### Example
+```typescript
+// 选择单个键
+type OriginalMap = Map<'name' | 'age' | 'email', string>;
+type OnlyName = PickMapKey<OriginalMap, 'name'>;
+// Map<'name', string>
+
+// 选择多个键
+type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
+// Map<'name' | 'age', string>
+```
+
+### SetValueOf<T>
+从 Set 类型中提取元素类型。
+
+```typescript
+type SetValueOf<T extends ReadonlySet<unknown>> = 
+  T extends ReadonlySet<infer V> ? V : never;
+```
+
+#### Type Parameters
+- `T` : 任意 Set 类型
+
+#### Description
+- 使用条件类型和 infer 关键字从 Set 类型中提取元素类型
+- 返回 Set 中所有可能元素的联合类型
+- 如果传入的不是 Set 类型，则返回 never
+
+#### Example
+```typescript
+// 基础用法
+type StringSet = Set<string>;
+type StringElement = SetValueOf<StringSet>; // string
+
+// 联合类型元素
+type MixedSet = Set<string | number | boolean>;
+type MixedElement = SetValueOf<MixedSet>; // string | number | boolean
+
+// 字面量类型元素
+type LiteralSet = Set<'red' | 'green' | 'blue'>;
+type ColorElement = SetValueOf<LiteralSet>; // 'red' | 'green' | 'blue'
+
+// 对象类型元素
+interface User {
+  id: number;
+  name: string;
+}
+type UserSet = Set<User>;
+type UserElement = SetValueOf<UserSet>; // User
+```
+
+### OmitSetValue<T, V>
+从 Set 类型中排除指定值的。
+
+```typescript
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
+  T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
+```
+
+#### Type Parameters
+- `T` : 任意 Set 类型
+- `V` : 要排除的值，必须是 T 中存在的元素类型
+
+#### Description
+- 创建一个新的 Set 类型，排除指定的元素类型
+- 使用 Exclude 工具类型从联合类型中移除指定类型
+- 适用于需要从 Set 中移除特定元素类型的场景
+
+#### Example
+```typescript
+// 排除单个值类型
+type OriginalSet = Set<'apple' | 'banana' | 'orange'>;
+type WithoutApple = OmitSetValue<OriginalSet, 'apple'>;
+// Set<'banana' | 'orange'>
+
+// 排除多个值类型
+type WithoutFruits = OmitSetValue<OriginalSet, 'apple' | 'banana'>;
+// Set<'orange'>
+
+// 数字类型示例
+type NumberSet = Set<1 | 2 | 3 | 4 | 5>;
+type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
+// Set<2 | 4>
+```
+
+### PickSetValue<T, V>
+从 Set 类型中选择指定值的。
+
+```typescript
+type PickSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = Set<V>;
+```
+
+#### Type Parameters
+- `T` : 任意 Set 类型
+- `V` : 要排除的值，必须是 T 中存在的元素类型
+
+#### Description
+- 创建一个新的 Set 类型，只包含指定的元素类型
+- 直接使用指定的值类型创建新的 Set
+- 适用于需要从 Set 中提取特定元素类型的场景
+
+#### Example
+```typescript
+// 选择单个值类型
+type OriginalSet = Set<'red' | 'green' | 'blue' | 'yellow'>;
+type PrimaryColors = PickSetValue<OriginalSet, 'red' | 'green' | 'blue'>;
+// Set<'red' | 'green' | 'blue'>
+
+// 选择数字类型
+type NumberSet = Set<1 | 2 | 3 | 4 | 5>;
+type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
+// Set<2 | 4>
+```
+
+### ArrayToSet<T>
+将数组类型转换为 Set 类型的。
+
+```typescript
+type ArrayToSet<T extends readonly unknown[]> = Set<T[number]>;
+```
+
+#### Type Parameters
+- `T` : 任意数组类型
+
+#### Description
+- 将数组类型转换为等价的 Set 类型
+- 使用索引访问类型 `T[number]` 获取数组元素类型
+- Set 会自动去重，所以重复的元素类型只会出现一次
+
+#### Example
+```typescript
+// 基础数组转换
+type StringArray = string[];
+type StringSet = ArrayToSet<StringArray>; // Set<string>
+
+// 元组转换
+type ColorTuple = ['red', 'green', 'blue', 'red'];
+type ColorSet = ArrayToSet<ColorTuple>; // Set<'red' | 'green' | 'blue'>
+
+// 联合类型数组
+type MixedArray = (string | number)[];
+type MixedSet = ArrayToSet<MixedArray>; // Set<string | number>
+
+// 实际使用示例
+const fruits = ['apple', 'banana', 'apple', 'orange'] as const;
+type FruitSet = ArrayToSet<typeof fruits>;
+// Set<'apple' | 'banana' | 'orange'>
+```
+
+### SetToArray<T>
+将 Set 类型转换为数组类型的。
+
+```typescript
+type SetToArray<T extends ReadonlySet<unknown>> = SetValueOf<T>[];
+```
+
+#### Type Parameters
+- `T` : 任意数组类型
+
+#### Description
+- 将 Set 类型转换为等价的数组类型
+- 使用 SetValueOf 提取 Set 的元素类型，然后创建数组类型
+
+#### Example
+```typescript
+// 基础 Set 转换
+type StringSet = Set<string>;
+type StringArray = SetToArray<StringSet>; // string[]
+
+// 字面量 Set 转换
+type ColorSet = Set<'red' | 'green' | 'blue'>;
+type ColorArray = SetToArray<ColorSet>; // ('red' | 'green' | 'blue')[]
+
+// 对象 Set 转换
+interface User {
+  id: number;
+  name: string;
+}
+type UserSet = Set<User>;
+type UserArray = SetToArray<UserSet>; // User[]
+
+// 实际使用示例
+function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
+  return Array.from(set) as SetToArray<T>;
+}
+```
 
 ## 📝 贡献指南
 欢迎提交`issue`或`pull request`，共同完善`Hook-Fetch`。
