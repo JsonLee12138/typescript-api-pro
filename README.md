@@ -419,7 +419,7 @@ type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 从 Map 类型中提取键类型。
 
 ```typescript
-type MapKeyOf<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never;
+type MapKeyOf<T extends Map<unknown, unknown>> = T extends Map<infer K, unknown> ? K : never;
 ```
 
 #### Type Parameters
@@ -449,7 +449,7 @@ type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
 从 Map 类型中提取值类型。
 
 ```typescript
-type MapValueOf<T extends Map<any, any>> = T extends Map<any, infer V> ? V : never;
+type MapValueOf<T extends Map<unknown, unknown>> = T extends Map<unknown, infer V> ? V : never;
 ```
 
 #### Type Parameters
@@ -482,8 +482,8 @@ type UserValue = MapValueOf<UserMap>; // User
 将 Map 类型转换为对象类型。
 
 ```typescript
-type MapToObject<T extends Map<any, any>> = {
-    [K in MapKeyOf<T> & PropertyKey]: T extends Map<any, infer V> ? V : never;
+type MapToObject<T extends Map<unknown, unknown>> = {
+    [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
 }
 ```
 
@@ -556,7 +556,7 @@ type ConfigMap = ObjectToMap<Config>;
 从 Map 类型中排除指定键的。
 
 ```typescript
-type OmitMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
   T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
@@ -585,8 +585,8 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 从 Map 类型中选择指定键的。
 
 ```typescript
-export type PickMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
-  T extends Map<any, infer V> ? Map<K, V> : never;
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+  T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
 #### Type Parameters
@@ -614,7 +614,8 @@ type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 从 Set 类型中提取元素类型。
 
 ```typescript
-type SetValueOf<T extends Set<any>> = T extends Set<infer V> ? V : never;
+type SetValueOf<T extends ReadonlySet<unknown>> = 
+  T extends ReadonlySet<infer V> ? V : never;
 ```
 
 #### Type Parameters
@@ -652,7 +653,7 @@ type UserElement = SetValueOf<UserSet>; // User
 从 Set 类型中排除指定值的。
 
 ```typescript
-type OmitSetValue<T extends Set<any>, V extends SetValueOf<T>> = 
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
   T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
@@ -686,7 +687,7 @@ type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
 从 Set 类型中选择指定值的。
 
 ```typescript
-type PickSetValue<T extends Set<any>, V extends SetValueOf<T>> = Set<V>;
+type PickSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = Set<V>;
 ```
 
 #### Type Parameters
@@ -715,7 +716,7 @@ type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
 将数组类型转换为 Set 类型的。
 
 ```typescript
-type ArrayToSet<T extends any[]> = Set<T[number]>;
+type ArrayToSet<T extends readonly unknown[]> = Set<T[number]>;
 ```
 
 #### Type Parameters
@@ -750,7 +751,7 @@ type FruitSet = ArrayToSet<typeof fruits>;
 将 Set 类型转换为数组类型的。
 
 ```typescript
-type SetToArray<T extends Set<any>> = SetValueOf<T>[];
+type SetToArray<T extends ReadonlySet<unknown>> = SetValueOf<T>[];
 ```
 
 #### Type Parameters

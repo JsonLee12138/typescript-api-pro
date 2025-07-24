@@ -441,7 +441,7 @@ type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
 Extracts the value type from a Map type.
 
 ```typescript
-type MapValueOf<T extends Map<any, any>> = T extends Map<any, infer V> ? V : never;
+type MapValueOf<T extends Map<unknown, unknown>> = T extends Map<unknown, infer V> ? V : never;
 ```
 
 #### Type Parameters
@@ -474,8 +474,8 @@ type UserValue = MapValueOf<UserMap>; // User
 Converts a Map type to an equivalent object type.
 
 ```typescript
-type MapToObject<T extends Map<any, any>> = {
-    [K in MapKeyOf<T> & PropertyKey]: T extends Map<any, infer V> ? V : never;
+type MapToObject<T extends Map<unknown, unknown>> = {
+    [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
 }
 ```
 
@@ -549,7 +549,7 @@ type ConfigMap = ObjectToMap<Config>;
 Creates a new Map type excluding specified keys.
 
 ```typescript
-type OmitMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
   T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
@@ -578,8 +578,8 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 Creates a new Map type including only specified keys.
 
 ```typescript
-export type PickMapKey<T extends Map<any, any>, K extends MapKeyOf<T>> = 
-  T extends Map<any, infer V> ? Map<K, V> : never;
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+  T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
 #### Type Parameters
@@ -607,7 +607,7 @@ type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 Extracts the element type from a Set type.
 
 ```typescript
-type SetValueOf<T extends Set<any>> = T extends Set<infer V> ? V : never;
+type SetValueOf<T extends ReadonlySet<unknown>> = T extends ReadonlySet<infer V> ? V : never;
 ```
 
 #### Type Parameters
@@ -645,7 +645,7 @@ type UserElement = SetValueOf<UserSet>; // User
 Creates a new Set type excluding specified value types.
 
 ```typescript
-type OmitSetValue<T extends Set<any>, V extends SetValueOf<T>> = 
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
   T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
@@ -679,7 +679,7 @@ type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
 Creates a new Set type including only specified value types.
 
 ```typescript
-type PickSetValue<T extends Set<any>, V extends SetValueOf<T>> = Set<V>;
+type PickSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = Set<V>;
 ```
 
 #### Type Parameters
@@ -708,7 +708,7 @@ type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
 Converts an array type to an equivalent Set type.
 
 ```typescript
-type ArrayToSet<T extends any[]> = Set<T[number]>;
+type ArrayToSet<T extends readonly unknown[]> = Set<T[number]>;
 ```
 
 #### Type Parameters
@@ -743,7 +743,7 @@ type FruitSet = ArrayToSet<typeof fruits>;
 Converts a Set type to an equivalent array type.
 
 ```typescript
-type SetToArray<T extends Set<any>> = SetValueOf<T>[];
+type SetToArray<T extends ReadonlySet<unknown>> = SetValueOf<T>[];
 ```
 
 #### Type Parameters
