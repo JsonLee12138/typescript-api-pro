@@ -50,11 +50,11 @@ type User = ArrayItem<Users>;
 
 TypeScript API Pro 将类型工具按功能分为以下几个模块：
 
- - **[对象类型](./api/object-types)**: 处理对象相关的类型操作
- - **[数组类型](./api/array-types)**: 处理数组相关的类型操作
- - **[Map 类型](./api/map-types)**: 处理 Map 相关的类型操作
- - **[Set 类型](./api/set-types)**: 处理 Set 相关的类型操作
+- **[对象类型](../api/object-types)**: 处理对象相关的类型操作
+- **[数组类型](../api/array-types)**: 处理数组相关的类型操作
+- **[Map 类型](../api/map-types)**: 处理 Map 相关的类型操作
+- **[Set 类型](../api/set-types)**: 处理 Set 相关的类型操作
 
 ## 下一步
 
-选择一个感兴趣的类型分类开始探索，或者查看我们的[完整 API 参考](./api/overview)。
+选择一个感兴趣的类型分类开始探索，或者查看我们的[完整 API 参考](../api/overview)。

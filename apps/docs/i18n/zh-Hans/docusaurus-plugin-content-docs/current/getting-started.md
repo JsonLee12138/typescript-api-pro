@@ -134,12 +134,12 @@ type PermissionElement = SetValueOf<PermissionSet>;
 
 现在你已经了解了 TypeScript API Pro 的基本用法，可以：
 
-1. 查看 [API 参考文档](./api/overview) 了解所有可用的类型工具
+1. 查看 [API 参考文档](../api/overview) 了解所有可用的类型工具
 2. 探索具体的类型分类：
-   - [对象类型工具](./api/object-types)
-   - [数组类型工具](./api/array-types)
-   - [Map 类型工具](./api/map-types)
-   - [Set 类型工具](./api/set-types)
+   - [对象类型工具](../api/object-types)
+   - [数组类型工具](../api/array-types)
+   - [Map 类型工具](../api/map-types)
+   - [Set 类型工具](../api/set-types)
 3. 在你的项目中开始使用这些类型工具
 
 如果遇到问题，欢迎在 [GitHub Issues](https://github.com/JsonLee12138/typescript-api-pro/issues) 中提问！

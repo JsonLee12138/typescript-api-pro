@@ -50,11 +50,11 @@ type User = ArrayItem<Users>;
 
 TypeScript API Pro organizes type utilities into the following functional modules:
 
- - **[Object Types](./api/object-types)**: Handle object-related type operations
- - **[Array Types](./api/array-types)**: Handle array-related type operations
- - **[Map Types](./api/map-types)**: Handle Map-related type operations
- - **[Set Types](./api/set-types)**: Handle Set-related type operations
+- **[Object Types](../api/object-types)**: Handle object-related type operations
+- **[Array Types](../api/array-types)**: Handle array-related type operations
+- **[Map Types](../api/map-types)**: Handle Map-related type operations
+- **[Set Types](../api/set-types)**: Handle Set-related type operations
 
 ## Next Steps
 
-Choose a type category that interests you to start exploring, or check out our [complete API reference](./api/overview).
+Choose a type category that interests you to start exploring, or check out our [complete API reference](../api/overview).

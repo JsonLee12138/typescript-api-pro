@@ -20,42 +20,42 @@ typescript-api-pro/
 
 ### Basic Types
 
-- [`PropertyKey`](./object-types#propertykey) - Object property key type
-- [`AnyObject<T>`](./object-types#anyobject) - Generic object type
+- [`PropertyKey`](../object-types#propertykey) - Object property key type
+- [`AnyObject<T>`](../object-types#anyobject) - Generic object type
 
 ### Object Operations
 
-- [`ValueOf<T>`](./object-types#valueof) - Extract object value types
-- [`KeyOf<T>`](./object-types#keyof) - Extract object key types
-- [`Generic<R, K, T>`](./object-types#generic) - Override object property type
-- [`OmitByObject<T, U>`](./object-types#omitbyobject) - Exclude properties based on object structure
+- [`ValueOf<T>`](../object-types#valueof) - Extract object value types
+- [`KeyOf<T>`](../object-types#keyof) - Extract object key types
+- [`Generic<R, K, T>`](../object-types#generic) - Override object property type
+- [`OmitByObject<T, U>`](../object-types#omitbyobject) - Exclude properties based on object structure
 
 ### Dependency Relationships
 
-- [`RequiredDependency<T, K, D>`](./object-types#requireddependency) - Property dependency relationship
-- [`MutuallyWithObject<T>`](./object-types#mutuallywithobject) - Mutually exclusive object properties
-- [`Mutually<T, K, O>`](./object-types#mutually) - Two-property mutual exclusion
+- [`RequiredDependency<T, K, D>`](../object-types#requireddependency) - Property dependency relationship
+- [`MutuallyWithObject<T>`](../object-types#mutuallywithobject) - Mutually exclusive object properties
+- [`Mutually<T, K, O>`](../object-types#mutually) - Two-property mutual exclusion
 
 ### Array Operations
 
-- [`ArrayItem<T>`](./array-types#arrayitem) - Extract array element type
+- [`ArrayItem<T>`](../array-types#arrayitem) - Extract array element type
 
 ### Map Operations
 
-- [`MapKeyOf<T>`](./map-types#mapkeyof) - Extract Map key type
-- [`MapValueOf<T>`](./map-types#mapvalueof) - Extract Map value type
-- [`MapToObject<T>`](./map-types#maptoobject) - Convert Map to object
-- [`ObjectToMap<T>`](./map-types#objecttomap) - Convert object to Map
-- [`OmitMapKey<T, K>`](./map-types#omitmapkey) - Exclude Map keys
-- [`PickMapKey<T, K>`](./map-types#pickmapkey) - Select Map keys
+- [`MapKeyOf<T>`](../map-types#mapkeyof) - Extract Map key type
+- [`MapValueOf<T>`](../map-types#mapvalueof) - Extract Map value type
+- [`MapToObject<T>`](../map-types#maptoobject) - Convert Map to object
+- [`ObjectToMap<T>`](../map-types#objecttomap) - Convert object to Map
+- [`OmitMapKey<T, K>`](../map-types#omitmapkey) - Exclude Map keys
+- [`PickMapKey<T, K>`](../map-types#pickmapkey) - Select Map keys
 
 ### Set Operations
 
-- [`SetValueOf<T>`](./set-types#setvalueof) - Extract Set element type
-- [`OmitSetValue<T, V>`](./set-types#omitsetvalue) - Exclude Set values
-- [`PickSetValue<T, V>`](./set-types#picksetvalue) - Select Set values
-- [`ArrayToSet<T>`](./set-types#arraytoset) - Convert array to Set
-- [`SetToArray<T>`](./set-types#settoarray) - Convert Set to array
+- [`SetValueOf<T>`](../set-types#setvalueof) - Extract Set element type
+- [`OmitSetValue<T, V>`](../set-types#omitsetvalue) - Exclude Set values
+- [`PickSetValue<T, V>`](../set-types#picksetvalue) - Select Set values
+- [`ArrayToSet<T>`](../set-types#arraytoset) - Convert array to Set
+- [`SetToArray<T>`](../set-types#settoarray) - Convert Set to array
 
 ## 🎯 Use Cases
 
@@ -105,7 +105,7 @@ type ConfigObject = MapToObject<Map<'host' | 'port', string>>; // { host: string
 
 Choose a specific type category to learn more details and usage examples:
 
-- [Object Type Utilities](./object-types)
-- [Array Type Utilities](./array-types)
-- [Map Type Utilities](./map-types)
-- [Set Type Utilities](./set-types)
+- [Object Type Utilities](../object-types)
+- [Array Type Utilities](../array-types)
+- [Map Type Utilities](../map-types)
+- [Set Type Utilities](../set-types)

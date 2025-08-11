@@ -259,12 +259,12 @@ type DatabaseConfig = RequiredDependency<
 
 Now that you understand the basic usage of TypeScript API Pro, you can:
 
-1. Check the [API Reference](./api/overview) to learn about all available type utilities
+1. Check the [API Reference](../api/overview) to learn about all available type utilities
 2. Explore specific type categories:
-   - [Object Type Utilities](./api/object-types)
-   - [Array Type Utilities](./api/array-types)
-   - [Map Type Utilities](./api/map-types)
-   - [Set Type Utilities](./api/set-types)
+   - [Object Type Utilities](../api/object-types)
+   - [Array Type Utilities](../api/array-types)
+   - [Map Type Utilities](../api/map-types)
+   - [Set Type Utilities](../api/set-types)
 3. Start using these type utilities in your projects
 
 If you encounter any issues, feel free to ask questions in [GitHub Issues](https://github.com/JsonLee12138/typescript-api-pro/issues)!
