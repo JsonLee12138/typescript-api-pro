@@ -1,6 +1,6 @@
 {
   "name": "typescript-api-pro",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "A comprehensive TypeScript type utility library",
   "types": "types/index.d.ts",
   "type": "module",
@@ -15,7 +15,7 @@
     "url": "https://github.com/JsonLee12138/typescript-api-pro/issues",
     "email": "lijunsong2@gmail.com"
   },
-  "homepage": "https://jsonlee12138.github.io/hook-fetch/",
+  "homepage": "https://jsonlee12138.github.io/typescript-api-pro/",
   "scripts": {
     "publish:beta": "npm publish --tag beta",
     "publish:release": "npm publish",
