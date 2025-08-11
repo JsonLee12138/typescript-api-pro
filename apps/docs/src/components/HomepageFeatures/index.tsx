@@ -1,56 +1,130 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
+import Translate, { translate } from '@docusaurus/Translate';
 import Heading from '@theme/Heading';
+import clsx from 'clsx';
+
 import styles from './styles.module.css';
 
-type FeatureItem = {
+interface FeatureItem {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: ReactNode;
-};
+  Svg: React.ReactNode;
+  description: JSX.Element;
+}
+
+function BaseIcon({ children }: React.PropsWithChildren) {
+  return (
+    <div className={styles.featureIcon}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * 类型安全图标 - 盾牌 + 检查标记
+ */
+function TypeSafetyIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+      <path d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="white" />
+    </svg>
+  );
+}
+
+/**
+ * 易于使用图标 - 上传/简单操作
+ */
+function EaseOfUseIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M9 11H7l5-5 5 5h-2v7h-6v-7z" />
+      <path d="M4 20h16v2H4z" />
+    </svg>
+  );
+}
+
+/**
+ * 功能全面图标 - 星形/多功能
+ */
+function ComprehensiveIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: translate({
+      id: 'homepage.features.typesafe.title',
+      message: 'Type Safe',
+      description: 'The title of type safety feature',
+    }),
+    Svg: (
+      <BaseIcon>
+        <TypeSafetyIcon />
+      </BaseIcon>
+    ),
     description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
-      </>
+      <Translate
+        id="homepage.features.typesafe.description"
+        description="The description of type safety feature"
+      >
+        Complete TypeScript support with intelligent type inference. Get full type safety from request to response, reducing runtime errors and improving development experience.
+      </Translate>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: translate({
+      id: 'homepage.features.easyuse.title',
+      message: 'Easy to Use',
+      description: 'The title of ease of use feature',
+    }),
+    Svg: (
+      <BaseIcon>
+        <EaseOfUseIcon />
+      </BaseIcon>
+    ),
     description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
+      <Translate
+        id="homepage.features.easyuse.description"
+        description="The description of ease of use feature"
+      >
+        Simple and intuitive API design. Get started in minutes with minimal configuration. Built-in best practices and sensible defaults for common use cases.
+      </Translate>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: translate({
+      id: 'homepage.features.comprehensive.title',
+      message: 'Comprehensive',
+      description: 'The title of comprehensive feature',
+    }),
+    Svg: (
+      <BaseIcon>
+        <ComprehensiveIcon />
+      </BaseIcon>
+    ),
     description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
+      <Translate
+        id="homepage.features.comprehensive.description"
+        description="The description of comprehensive feature"
+      >
+        Rich utility types for Objects, Arrays, Maps, and Sets. Powerful type transformations, filtering, and manipulation tools to handle complex data structures with ease.
+      </Translate>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, Svg, description }: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        {Svg}
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
-        <p>{description as string}</p>
+        <p>{description}</p>
       </div>
     </div>
   );

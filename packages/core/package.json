@@ -1,29 +1,27 @@
 {
-  "name": "@jsonlee/core",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/cjs/index.cjs",
+  "name": "typescript-api-pro",
+  "version": "0.0.8",
+  "description": "A comprehensive TypeScript type utility library",
   "types": "types/index.d.ts",
-  "module": "dist/es/index.mjs",
-  "browser": "dist/umd/index.js",
-  "unpkg": "dist/umd/index.js",
-  "jsdelivr": "dist/umd/index.js",
   "type": "module",
   "files": [
-    "dist",
-    "types",
-    "!dist/**/*.map",
-    "!types/**/*.map",
-    "README.md",
-    "LICENSE",
-    "README.en.md"
+    "types"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JsonLee12138/typescript-api-pro"
+  },
+  "bugs": {
+    "url": "https://github.com/JsonLee12138/typescript-api-pro/issues",
+    "email": "lijunsong2@gmail.com"
+  },
+  "homepage": "https://jsonlee12138.github.io/hook-fetch/",
   "scripts": {
     "publish:beta": "npm publish --tag beta",
     "publish:release": "npm publish",
-    "build": "rolldown -c rolldown.config.ts",
+    "check": "tsc --noEmit",
+    "test": "tsc --noEmit",
     "oxlint": "oxlint",
-    "test": "vitest",
     "test:ui": "vitest --ui",
     "lint:fix": "eslint --fix .",
     "lint": "eslint ."

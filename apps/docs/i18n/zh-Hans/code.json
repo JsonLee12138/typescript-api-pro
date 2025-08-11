@@ -1,0 +1,38 @@
+{
+  "homepage.title": {
+    "message": "欢迎使用 TypeScript API Pro",
+    "description": "The homepage title"
+  },
+  "homepage.description": {
+    "message": "全面的 TypeScript 类型工具库，提供丰富的类型操作工具",
+    "description": "The homepage description"
+  },
+  "homepage.hero.getStarted": {
+    "message": "快速开始 - 5分钟 ⏱️",
+    "description": "The get started button text"
+  },
+  "homepage.features.typesafe.title": {
+    "message": "类型安全",
+    "description": "The title of type safety feature"
+  },
+  "homepage.features.typesafe.description": {
+    "message": "完整的 TypeScript 类型支持和智能类型推导。从请求到响应的全程类型安全，减少运行时错误，提升开发体验。",
+    "description": "The description of type safety feature"
+  },
+  "homepage.features.easyuse.title": {
+    "message": "易于使用",
+    "description": "The title of ease of use feature"
+  },
+  "homepage.features.easyuse.description": {
+    "message": "简洁直观的 API 设计。几分钟即可上手，最少配置即可使用。内置最佳实践和合理的默认设置，适用于常见使用场景。",
+    "description": "The description of ease of use feature"
+  },
+  "homepage.features.comprehensive.title": {
+    "message": "功能全面",
+    "description": "The title of comprehensive feature"
+  },
+  "homepage.features.comprehensive.description": {
+    "message": "丰富的对象、数组、Map、Set 工具类型。强大的类型转换、过滤和操作工具，轻松处理复杂的数据结构。",
+    "description": "The description of comprehensive feature"
+  }
+}

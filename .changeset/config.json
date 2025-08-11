@@ -4,10 +4,10 @@
   "baseBranch": "main",
   "commit": false,
   "fixed": [],
-  "linked": [["@jsonlee/core", "@jsonlee/docs"]],
+  "linked": [["typescript-api-pro", "@typescript-api-pro/docs"]],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@jsonlee/docs"],
+  "ignore": ["@typescript-api-pro/docs"],
   "privatePackages": {
     "version": true,
     "tag": false

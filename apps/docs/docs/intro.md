@@ -2,46 +2,59 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# TypeScript API Pro Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to **TypeScript API Pro** - A comprehensive TypeScript type utility library!
 
-## Getting Started
+## What is TypeScript API Pro?
 
-Get started by **creating a new site**.
+TypeScript API Pro is a type utility library designed specifically for TypeScript developers, providing a rich set of type manipulation tools to help you handle complex type scenarios more efficiently.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Key Features
 
-### What you'll need
+- 🎯 **Type Safe**: All utility types are strictly type-checked
+- 🔧 **Practical Tools**: Covers type operations for objects, arrays, Maps, Sets and other common data structures
+- 📚 **Complete Documentation**: Each type has detailed descriptions and examples
+- 🚀 **Zero Dependencies**: Pure TypeScript type definitions with no runtime overhead
+- 💡 **Easy to Use**: Clean API design that's easy to understand and use
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Quick Start
 
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
+### Installation
 
 ```bash
-cd my-website
-npm run start
+npm install typescript-api-pro
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+### Basic Usage
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+```typescript
+import type { AnyObject, ArrayItem, ValueOf } from 'typescript-api-pro';
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+// Create a generic object type
+type Config = AnyObject<string>;
+
+// Extract union type of object values
+interface Status {
+  success: 200;
+  error: 500;
+}
+type StatusCode = ValueOf<Status>; // 200 | 500
+
+// Extract array element type
+type Users = User[];
+type User = ArrayItem<Users>;
+```
+
+## Type Categories
+
+TypeScript API Pro organizes type utilities into the following functional modules:
+
+ - **[Object Types](./api/object-types)**: Handle object-related type operations
+ - **[Array Types](./api/array-types)**: Handle array-related type operations
+ - **[Map Types](./api/map-types)**: Handle Map-related type operations
+ - **[Set Types](./api/set-types)**: Handle Set-related type operations
+
+## Next Steps
+
+Choose a type category that interests you to start exploring, or check out our [complete API reference](./api/overview).

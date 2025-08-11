@@ -1,7 +1,7 @@
 {
   "extends": "@jsonlee/tsconfig/base.tsconfig.json",
   "include": [
-    "./lib/**/*",
-    "./__test__/**/*"
+    "./__test__/**/*",
+    "./types/**/*"
   ]
 }

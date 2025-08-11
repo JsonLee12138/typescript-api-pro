@@ -1,0 +1,38 @@
+{
+  "tutorialSidebar": [
+    {
+      "type": "doc",
+      "id": "intro"
+    },
+    {
+      "type": "doc",
+      "id": "getting-started"
+    },
+    {
+      "type": "category",
+      "label": "API 参考",
+      "items": [
+        {
+          "type": "doc",
+          "id": "api/overview"
+        },
+        {
+          "type": "doc",
+          "id": "api/object-types"
+        },
+        {
+          "type": "doc",
+          "id": "api/array-types"
+        },
+        {
+          "type": "doc",
+          "id": "api/map-types"
+        },
+        {
+          "type": "doc",
+          "id": "api/set-types"
+        }
+      ]
+    }
+  ]
+}
