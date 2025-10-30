@@ -1,9 +1,21 @@
 # Typescript API Reference
+
 [中文文档](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.md)
 
-## Types
+## 📚 Type Utilities
+
+TypeScript API Pro provides a complete set of type utilities organized into the following categories:
+
+- [Object Types](#object-types) - Object type utilities
+- [Array Types](#array-types) - Array type utilities
+- [Map Types](#map-types) - Map type utilities
+- [Set Types](#set-types) - Set type utilities
+- [String Types](#string-types) - String type utilities
+
+## Object Types
 
 ### PropertyKey
+
 A union type representing all possible object property key types in JavaScript.
 
 ```typescript
@@ -11,17 +23,20 @@ type PropertyKey = string | number | symbol;
 ```
 
 #### Description
+
 - Includes all possible object property key types in JavaScript
 - Equivalent to TypeScript's built-in `PropertyKey` type
 
 #### Example
+
 ```typescript
-const strKey: PropertyKey = 'name';     // string key
-const numKey: PropertyKey = 42;         // number key
-const symKey: PropertyKey = Symbol();   // symbol key
+const strKey: PropertyKey = 'name'; // string key
+const numKey: PropertyKey = 42; // number key
+const symKey: PropertyKey = Symbol(); // symbol key
 ```
 
 ### AnyObject<T = any>
+
 Creates an object type with keys of type `PropertyKey` and values of generic type `T`.
 
 ```typescript
@@ -29,11 +44,13 @@ type AnyObject<T = any> = Record<PropertyKey, T>;
 ```
 
 #### Description
+
 - Generic parameter `T` defines the type of object values, defaults to `any`
 - Object keys can be any `PropertyKey` type
 - Useful for defining objects with flexible key types but consistent value types
 
 #### Example
+
 ```typescript
 // Object with all string values
 const strObject: AnyObject<string> = {
@@ -51,24 +68,28 @@ const numObject: AnyObject<number> = {
 ```
 
 ### RequiredDependency<T, K, D>
+
 Creates a type where certain properties must either exist together or not exist at all.
 
 ```typescript
-type RequiredDependency<T, K extends keyof T, D extends keyof T> =
-  Omit<T, D> & (Partial<{ [P in K | D]: never }> | Required<Pick<T, K | D>>);
+type RequiredDependency<T, K extends keyof T, D extends keyof T>
+  = Omit<T, D> & (Partial<{ [P in K | D]: never }> | Required<Pick<T, K | D>>);
 ```
 
 #### Type Parameters
+
 - `T`: Base object type
 - `K`: Key property
 - `D`: Dependent property
 
 #### Description
+
 - Ensures that when key property `K` exists, dependent property `D` must also exist
 - If key property `K` is not provided, dependent property `D` cannot be provided either
 - Useful for handling property dependencies in configuration objects or API parameters
 
 #### Example
+
 ```typescript
 interface Config {
   name: string;
@@ -94,31 +115,34 @@ const config2: ServerConfig = {
 // ❌ Invalid: cannot provide host without port
 const config3: ServerConfig = {
   name: 'server3',
-  host: 'localhost'  // Error
+  host: 'localhost' // Error
 };
 
 // ❌ Invalid: cannot provide port without host
 const config4: ServerConfig = {
   name: 'server4',
-  port: 8080  // Error
+  port: 8080 // Error
 };
 ```
 
 ### MutuallyWithObject<T>
+
 Creates a mutually exclusive object type where only one property from the base type T can be present.
 
 ```typescript
 type MutuallyWithObject<T extends AnyObject> = {
   [K in keyof T]: { [P in K]: T[K] } & { [P in Exclude<keyof T, K>]?: never };
-}[keyof T]
+}[keyof T];
 ```
 
 #### Description
+
 - Ensures only one property from the specified set can exist in an object
 - Perfect for representing mutually exclusive options
 - Each property maintains its original type from T
 
 #### Example
+
 ```typescript
 interface LoginOptions {
   username: string;
@@ -147,11 +171,12 @@ const login3: LoginMethod = {
 // ❌ Invalid: cannot provide multiple properties
 const login4: LoginMethod = {
   username: 'user123',
-  email: 'user@example.com'  // Error
+  email: 'user@example.com' // Error
 };
 ```
 
 ### Mutually<T, K, O>
+
 Creates a union type where either property K is absent or property O is absent.
 
 ```typescript
@@ -159,16 +184,19 @@ type Mutually<T extends AnyObject, K extends keyof T, O extends keyof T> = Omit<
 ```
 
 #### Type Parameters
+
 - `T`: Base object type
 - `K`: First mutually exclusive property
 - `O`: Second mutually exclusive property
 
 #### Description
+
 - Ensures two specific properties cannot exist together in an object
 - Unlike MutuallyWithObject, other properties are allowed to coexist
 - Useful for handling mutual exclusivity between two specific properties
 
 #### Example
+
 ```typescript
 interface FormData {
   name: string;
@@ -205,11 +233,12 @@ const data4: IdentityFormData = {
   name: 'Sam',
   age: 35,
   personalId: '110101199001011234',
-  passportNumber: 'G12345678'  // Error
+  passportNumber: 'G12345678' // Error
 };
 ```
 
 ### Generic<R, K, T>
+
 Creates a new type that inherits all properties from the base type R but overwrites the type of a specific property K with type T.
 
 ```typescript
@@ -217,16 +246,19 @@ type Generic<R extends AnyObject, K extends keyof R, T> = Omit<R, K> & { [P in K
 ```
 
 #### Type Parameters
+
 - `R`: Base object type
 - `K`: Property key whose type needs to be overwritten
 - `T`: New property type
 
 #### Description
+
 - Preserves all properties from the original type
 - Replaces just the type of the specified property
 - Useful for extending or specializing existing types
 
 #### Example
+
 ```typescript
 interface User {
   id: number;
@@ -255,22 +287,26 @@ const user: EnhancedUser = {
 ```
 
 ### OmitByObject<T, U>
+
 Exclude all properties from type T that have the same key names as those in type U.
 
 ```typescript
-type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>
+type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>;
 ```
 
 #### Type Parameters
+
 - `T`: The source object type
 - `U`: The object type containing keys to be omitted
 
 #### Description
+
 - Excludes properties from the source object based on the keys of another object type.
 - More flexible than the standard `Omit`, as it can omit properties based on the structure of an entire object type.
 - Useful when you need to remove properties from one object that are present in the structure of another object.
 
 #### Example
+
 ```typescript
 interface Person {
   name: string;
@@ -320,7 +356,10 @@ const productData: ProductData = {
 };
 ```
 
+## Array Types
+
 ### ArrayItem<T>
+
 A utility type that extracts the element type from an array type.
 
 ```typescript
@@ -328,14 +367,17 @@ type ArrayItem<T extends any[]> = T[number];
 ```
 
 #### Type Parameters
+
 - `T`: Any array type
 
 #### Description
+
 - Uses indexed access type `T[number]` to extract the element type from an array type
 - Can be used to get element types from arrays, tuples, or readonly arrays
 - Particularly useful when working with generic arrays, preserving specific type information of elements
 
 #### Example
+
 ```typescript
 // Simple array type
 type NumberArray = number[];
@@ -360,6 +402,7 @@ type UserItem = ArrayItem<UserArray>; // User
 ```
 
 ### ValueOf<T>
+
 Extracts a union type of all property values from an object type.
 
 ```typescript
@@ -367,13 +410,16 @@ type ValueOf<T> = T[keyof T];
 ```
 
 #### Type Parameters
+
 - `T`: Any object type
 
 #### Description
+
 - Produces a union of all property value types of the object
 - Useful for type mapping, inference, and utility types
 
 #### Example
+
 ```typescript
 interface StatusMap {
   success: 200;
@@ -384,6 +430,7 @@ type StatusCode = ValueOf<StatusMap>; // 200 | 404 | 500
 ```
 
 ### KeyOf<T>
+
 Gets a union type of all property keys of an object.
 
 ```typescript
@@ -391,13 +438,16 @@ type KeyOf<T> = keyof T;
 ```
 
 #### Type Parameters
+
 - `T`: Any object type
 
 #### Description
+
 - Equivalent to TypeScript's built-in `keyof` operator
 - Produces a union of all property names of the object
 
 #### Example
+
 ```typescript
 interface User {
   id: number;
@@ -407,7 +457,10 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+## Map Types
+
 ### MapKeyOf<T>
+
 Extracts the key type from a Map type.
 
 ```typescript
@@ -415,14 +468,17 @@ type MapKeyOf<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never
 ```
 
 #### Type Parameters
+
 - `T` : Any Map type
 
 #### Description
+
 - Uses conditional types and the `infer` keyword to extract the key type from a Map type
 - Returns a union type of all possible keys in the Map
 - Returns `never` if the input is not a Map type
 
 #### Example
+
 ```typescript
 // Basic usage
 type StringNumberMap = Map<string, number>;
@@ -438,6 +494,7 @@ type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
 ```
 
 ### MapValueOf<T>
+
 Extracts the value type from a Map type.
 
 ```typescript
@@ -445,13 +502,16 @@ type MapValueOf<T extends Map<unknown, unknown>> = T extends Map<unknown, infer 
 ```
 
 #### Type Parameters
+
 - `T`: Any Map type
 
 #### Description
+
 - Extracts the value type from a Map type
 - Returns a union type of all possible values in the Map
 
 #### Example
+
 ```typescript
 // Basic usage
 type StringNumberMap = Map<string, number>;
@@ -471,27 +531,31 @@ type UserValue = MapValueOf<UserMap>; // User
 ```
 
 ### MapToObject<T>
+
 Converts a Map type to an equivalent object type.
 
 ```typescript
 type MapToObject<T extends Map<unknown, unknown>> = {
-    [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
-}
+  [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
+};
 ```
 
 #### Type Parameters
+
 - `T`: Any Map type
 
 #### Description
+
 - Converts a Map type to an equivalent object type
 - Only works correctly when the Map's key type is a subset of `PropertyKey` (string | number | symbol)
 - Preserves the original key-value relationships
 
 #### Example
+
 ```typescript
 // String key Map
 type StringMap = Map<'name' | 'age', string>;
-type StringObject = MapToObject<StringMap>; 
+type StringObject = MapToObject<StringMap>;
 // { name: string; age: string; }
 
 // Numeric key Map
@@ -511,6 +575,7 @@ type UserObject = MapToObject<typeof userMap>;
 ```
 
 ### ObjectToMap<T>
+
 Converts an object type to an equivalent Map type.
 
 ```typescript
@@ -518,13 +583,16 @@ type ObjectToMap<T extends AnyObject> = Map<keyof T, T[keyof T]>;
 ```
 
 #### Type Parameters
+
 - `T`: Object type inheriting from `AnyObject`
 
 #### Description
+
 - Converts an object type to an equivalent Map type
 - Uses object keys as Map keys and object values as Map values
 
 #### Example
+
 ```typescript
 // Basic object conversion
 interface User {
@@ -546,23 +614,27 @@ type ConfigMap = ObjectToMap<Config>;
 ```
 
 ### OmitMapKey<T, K>
+
 Creates a new Map type excluding specified keys.
 
 ```typescript
-type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
-  T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>>
+  = T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
 #### Type Parameters
+
 - `T`: Object type inheriting from AnyObject
 - `K`: Keys to exclude (must exist in T)
 
 #### Description
+
 - Creates a new Map type excluding specified keys
 - Preserves the original value type while removing specified key types
 - Similar to the Omit utility type for object types
 
 #### Example
+
 ```typescript
 // Exclude single key
 type OriginalMap = Map<'name' | 'age' | 'email', string>;
@@ -575,23 +647,27 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 ```
 
 ### PickMapKey<T, K>
+
 Creates a new Map type including only specified keys.
 
 ```typescript
-export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
-  T extends Map<unknown, infer V> ? Map<K, V> : never;
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>>
+  = T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
 #### Type Parameters
+
 - `T`: Object type inheriting from AnyObject
 - `K`: Keys to include (must exist in T)
 
 #### Description
+
 - Creates a new Map type including only specified keys
 - Preserves the original value type while selecting specific key types
 - Similar to the Pick utility type for object types
 
 #### Example
+
 ```typescript
 // Select single key
 type OriginalMap = Map<'name' | 'age' | 'email', string>;
@@ -603,7 +679,10 @@ type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 // Map<'name' | 'age', string>
 ```
 
+## Set Types
+
 ### SetValueOf<T>
+
 Extracts the element type from a Set type.
 
 ```typescript
@@ -611,14 +690,17 @@ type SetValueOf<T extends ReadonlySet<unknown>> = T extends ReadonlySet<infer V>
 ```
 
 #### Type Parameters
+
 - `T`: Any Set type
 
 #### Description
+
 - Extracts the element type from a Set type using conditional types and `infer`
 - Returns a union type of all possible elements in the Set
 - Returns `never` if the input is not a Set type
 
 #### Example
+
 ```typescript
 // Basic usage
 type StringSet = Set<string>;
@@ -642,23 +724,27 @@ type UserElement = SetValueOf<UserSet>; // User
 ```
 
 ### OmitSetValue<T, V>
+
 Creates a new Set type excluding specified value types.
 
 ```typescript
-type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
-  T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>>
+  = T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
 #### Type Parameters
+
 - `T`: Any Set type
 - `V`: Values to exclude (must exist in T)
 
 #### Description
+
 - Creates a new Set type excluding specified element types
 - Uses the Exclude utility type to remove specified types from the union
 - Useful for scenarios requiring removal of specific element types from Sets
 
 #### Example
+
 ```typescript
 // Exclude single value type
 type OriginalSet = Set<'apple' | 'banana' | 'orange'>;
@@ -676,6 +762,7 @@ type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
 ```
 
 ### PickSetValue<T, V>
+
 Creates a new Set type including only specified value types.
 
 ```typescript
@@ -683,15 +770,18 @@ type PickSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = Set<V>;
 ```
 
 #### Type Parameters
+
 - `T`: Any Set type
 - `V`: Values to include (must exist in T)
 
 #### Description
+
 - Creates a new Set type including only specified element types
 - Directly constructs a new Set with the specified value types
 - Useful for extracting specific element types from existing Sets
 
 #### Example
+
 ```typescript
 // Select value types
 type OriginalSet = Set<'red' | 'green' | 'blue' | 'yellow'>;
@@ -705,6 +795,7 @@ type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
 ```
 
 ### ArrayToSet<T>
+
 Converts an array type to an equivalent Set type.
 
 ```typescript
@@ -712,14 +803,17 @@ type ArrayToSet<T extends readonly unknown[]> = Set<T[number]>;
 ```
 
 #### Type Parameters
+
 - T: Any array type
 
 #### Description
+
 - Converts an array type to an equivalent Set type
 - Uses indexed access type `T[number]` to extract element types
 - Automatically deduplicates repeating element types
 
 #### Example
+
 ```typescript
 // Basic array conversion
 type StringArray = string[];
@@ -740,6 +834,7 @@ type FruitSet = ArrayToSet<typeof fruits>;
 ```
 
 ### SetToArray<T>
+
 Converts a Set type to an equivalent array type.
 
 ```typescript
@@ -747,14 +842,17 @@ type SetToArray<T extends ReadonlySet<unknown>> = SetValueOf<T>[];
 ```
 
 #### Type Parameters
+
 - `T`: Any array type
 
 #### Description
+
 - Converts a Set type to an equivalent array type
 - Extracts element types using SetValueOf and creates an array type
 - Provides the inverse operation of ArrayToSet
 
 #### Example
+
 ```typescript
 // Basic Set conversion
 type StringSet = Set<string>;
@@ -778,7 +876,102 @@ function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
 }
 ```
 
+## String Types
+
+### Camel2SnakeCase<T, U>
+
+Converts camelCase strings to snake_case format.
+
+```typescript
+type Camel2SnakeCase<T extends string, U extends boolean = true> = /* ... */
+```
+
+#### Type Parameters
+
+- `T`: The camelCase string to convert
+- `U`: Whether to use uppercase (default: `true`)
+
+#### Description
+
+- Converts camelCase to snake_case format
+- Optionally converts to UPPER_SNAKE_CASE or lower_snake_case
+- Type-level transformation with zero runtime overhead
+- Useful for API requests/responses, database fields, environment variables, and other naming convention conversions
+
+#### Example
+
+```typescript
+// Convert to UPPER_SNAKE_CASE (default)
+type Result1 = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+type Result2 = Camel2SnakeCase<'userId'>; // 'USER_ID'
+type Result3 = Camel2SnakeCase<'myVariableName'>; // 'MY_VARIABLE_NAME'
+
+// Convert to lowercase snake_case
+type Result4 = Camel2SnakeCase<'userName', false>; // 'user_name'
+type Result5 = Camel2SnakeCase<'userId', false>; // 'user_id'
+type Result6 = Camel2SnakeCase<'myVariableName', false>; // 'my_variable_name'
+
+// Practical use: API request object conversion
+interface UserRequest {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+}
+
+// Convert to backend API format (UPPER_SNAKE_CASE)
+type ApiUserRequest = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string>]: UserRequest[K]
+};
+// Result: { FIRST_NAME: string; LAST_NAME: string; EMAIL_ADDRESS: string; }
+
+// Convert to database field format (lower_snake_case)
+type DbUserModel = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string, false>]: UserRequest[K]
+};
+// Result: { first_name: string; last_name: string; email_address: string; }
+
+// Environment variable configuration
+interface AppConfig {
+  databaseUrl: string;
+  apiKey: string;
+  maxConnections: number;
+}
+
+type EnvVars = {
+  [K in keyof AppConfig as Camel2SnakeCase<K & string>]: string
+};
+// Result: { DATABASE_URL: string; API_KEY: string; MAX_CONNECTIONS: string; }
+
+// Type-safe conversion function
+function toSnakeCase<T extends Record<string, unknown>>(
+  obj: T,
+  uppercase = false
+): { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] } {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter =>
+      `_${uppercase ? letter : letter.toLowerCase()}`);
+    result[snakeKey] = obj[key];
+  }
+
+  return result as { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] };
+}
+
+const userData: UserRequest = {
+  firstName: 'John',
+  lastName: 'Doe',
+  emailAddress: 'john@example.com'
+};
+
+const dbRecord = toSnakeCase(userData);
+// TypeScript ensures type safety
+console.log(dbRecord.first_name); // ✅ Valid
+// console.log(dbRecord.firstName); // ❌ Error: Property does not exist
+```
+
 ## 📝 Contribution Guide
+
 Feel free to submit `issues` or `pull requests` to help improve `Hook-Fetch`.
 
 ## 📄 License

@@ -93,11 +93,11 @@ const loginWithPhone: LoginMethod = {
           <Heading as="h2">权限管理示例</Heading>
           <p>使用 Set 类型工具管理用户权限：</p>
           <CodeBlock language="typescript">
-            {`import type { 
-  ArrayToSet, 
-  OmitSetValue, 
+            {`import type {
+  ArrayToSet,
+  OmitSetValue,
   PickSetValue,
-  SetValueOf 
+  SetValueOf
 } from 'typescript-api-pro';
 
 // 系统所有权限
@@ -163,7 +163,7 @@ function handleApiResponse<T>(response: SafeApiResponse<T>) {
   } else if ('error' in response && response.error !== undefined) {
     console.error('请求失败:', response.error);
   }
-  
+
   if (response.loading) {
     console.log('请求进行中...');
   }
@@ -191,11 +191,11 @@ handleApiResponse(errorResponse);`}
           <Heading as="h2">Map 和对象转换示例</Heading>
           <p>使用 Map 类型工具进行类型安全的转换：</p>
           <CodeBlock language="typescript">
-            {`import type { 
-  MapToObject, 
-  ObjectToMap, 
-  MapKeyOf, 
-  MapValueOf 
+            {`import type {
+  MapToObject,
+  ObjectToMap,
+  MapKeyOf,
+  MapValueOf
 } from 'typescript-api-pro';
 
 // 配置对象
@@ -245,6 +245,94 @@ const configBack = mapToObject(configMap);
 console.log('原始配置:', config);
 console.log('Map 配置:', configMap);
 console.log('转换回的配置:', configBack);`}
+          </CodeBlock>
+        </section>
+
+        <section className="margin-vert--lg">
+          <Heading as="h2">字符串命名转换示例</Heading>
+          <p>使用 Camel2SnakeCase 在不同命名风格间进行类型安全的转换：</p>
+          <CodeBlock language="typescript">
+            {`import type { Camel2SnakeCase } from 'typescript-api-pro';
+
+// API 请求对象（前端使用驼峰命名）
+interface UserRequest {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  phoneNumber: string;
+}
+
+// 转换为后端 API 格式（大写蛇形命名）
+type ApiUserRequest = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string>]: UserRequest[K]
+};
+// 结果：{ FIRST_NAME: string; LAST_NAME: string; EMAIL_ADDRESS: string; PHONE_NUMBER: string; }
+
+// 数据库模型（小写蛇形命名）
+type DbUserModel = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string, false>]: UserRequest[K]
+};
+// 结果：{ first_name: string; last_name: string; email_address: string; phone_number: string; }
+
+// 类型安全的转换函数
+function toSnakeCase<T extends Record<string, unknown>>(
+  obj: T,
+  uppercase = false
+): { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] } {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter =>
+      \`_\${uppercase ? letter : letter.toLowerCase()}\`
+    );
+    result[snakeKey] = obj[key];
+  }
+
+  return result as { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] };
+}
+
+// 使用示例
+const userData: UserRequest = {
+  firstName: '张三',
+  lastName: '李',
+  emailAddress: 'zhangsan@example.com',
+  phoneNumber: '13812345678'
+};
+
+// 发送到 API（大写蛇形命名）
+const apiPayload = toSnakeCase(userData, true);
+// { first_name: '张三', last_name: '李', email_address: 'zhangsan@example.com', phone_number: '13812345678' }
+
+// 保存到数据库（小写蛇形命名）
+const dbRecord = toSnakeCase(userData, false);
+// { first_name: '张三', last_name: '李', email_address: 'zhangsan@example.com', phone_number: '13812345678' }
+
+// TypeScript 确保类型安全
+console.log(dbRecord.first_name); // ✅ 正确
+// console.log(dbRecord.firstName); // ❌ 错误：属性 'firstName' 不存在
+
+// 环境变量配置示例
+interface AppConfig {
+  databaseUrl: string;
+  apiKey: string;
+  maxConnections: number;
+}
+
+type EnvVars = {
+  [K in keyof AppConfig as Camel2SnakeCase<K & string>]: string
+};
+// 结果：{ DATABASE_URL: string; API_KEY: string; MAX_CONNECTIONS: string; }
+
+function loadEnv(): EnvVars {
+  return {
+    DATABASE_URL: process.env.DATABASE_URL || '',
+    API_KEY: process.env.API_KEY || '',
+    MAX_CONNECTIONS: process.env.MAX_CONNECTIONS || '10'
+  };
+}
+
+const env = loadEnv();
+console.log('数据库 URL:', env.DATABASE_URL);`}
           </CodeBlock>
         </section>
 

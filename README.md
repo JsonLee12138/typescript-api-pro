@@ -1,7 +1,17 @@
 # Typescript API 参考
 [English Document](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.en.md)
 
-## Types
+## 📚 类型工具库
+
+TypeScript API Pro 提供了一套完整的类型工具，按功能分为以下几类：
+
+- [Object Types](#object-types) - 对象类型工具
+- [Array Types](#array-types) - 数组类型工具
+- [Map Types](#map-types) - Map 类型工具
+- [Set Types](#set-types) - Set 类型工具
+- [String Types](#string-types) - 字符串类型工具
+
+## Object Types
 
 ### PropertyKey
 用于表示对象属性键的联合类型。
@@ -319,6 +329,8 @@ const productData: ProductData = {
 };
 ```
 
+## Array Types
+
 ### ArrayItem<T>
 从数组类型中提取元素类型的工具类型。
 
@@ -415,6 +427,8 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+## Map Types
+
 ### MapKeyOf<T>
 从 Map 类型中提取键类型。
 
@@ -499,7 +513,7 @@ type MapToObject<T extends Map<unknown, unknown>> = {
 ```typescript
 // 字符串键的 Map
 type StringMap = Map<'name' | 'age', string>;
-type StringObject = MapToObject<StringMap>; 
+type StringObject = MapToObject<StringMap>;
 // { name: string; age: string; }
 
 // 数字键的 Map
@@ -556,7 +570,7 @@ type ConfigMap = ObjectToMap<Config>;
 从 Map 类型中排除指定键的。
 
 ```typescript
-type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> =
   T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
@@ -585,7 +599,7 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 从 Map 类型中选择指定键的。
 
 ```typescript
-export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> =
   T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
@@ -610,11 +624,13 @@ type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 // Map<'name' | 'age', string>
 ```
 
+## Set Types
+
 ### SetValueOf<T>
 从 Set 类型中提取元素类型。
 
 ```typescript
-type SetValueOf<T extends ReadonlySet<unknown>> = 
+type SetValueOf<T extends ReadonlySet<unknown>> =
   T extends ReadonlySet<infer V> ? V : never;
 ```
 
@@ -653,7 +669,7 @@ type UserElement = SetValueOf<UserSet>; // User
 从 Set 类型中排除指定值的。
 
 ```typescript
-type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> =
   T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
@@ -783,6 +799,97 @@ type UserArray = SetToArray<UserSet>; // User[]
 function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
   return Array.from(set) as SetToArray<T>;
 }
+```
+
+## String Types
+
+### Camel2SnakeCase<T, U>
+将驼峰命名字符串转换为蛇形命名格式。
+
+```typescript
+type Camel2SnakeCase<T extends string, U extends boolean = true> = /* ... */
+```
+
+#### Type Parameters
+- `T` : 要转换的驼峰命名字符串
+- `U` : 是否使用大写（默认：`true`）
+
+#### Description
+- 将驼峰命名（camelCase）转换为蛇形命名（snake_case）
+- 可选择转换为大写蛇形命名（UPPER_SNAKE_CASE）或小写蛇形命名（lower_snake_case）
+- 在类型级别进行转换，零运行时开销
+- 适用于 API 请求/响应、数据库字段、环境变量等命名转换场景
+
+#### Example
+```typescript
+// 转换为大写蛇形命名（默认）
+type Result1 = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+type Result2 = Camel2SnakeCase<'userId'>; // 'USER_ID'
+type Result3 = Camel2SnakeCase<'myVariableName'>; // 'MY_VARIABLE_NAME'
+
+// 转换为小写蛇形命名
+type Result4 = Camel2SnakeCase<'userName', false>; // 'user_name'
+type Result5 = Camel2SnakeCase<'userId', false>; // 'user_id'
+type Result6 = Camel2SnakeCase<'myVariableName', false>; // 'my_variable_name'
+
+// 实际应用：API 请求对象转换
+interface UserRequest {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+}
+
+// 转换为后端 API 格式（大写蛇形命名）
+type ApiUserRequest = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string>]: UserRequest[K]
+};
+// 结果：{ FIRST_NAME: string; LAST_NAME: string; EMAIL_ADDRESS: string; }
+
+// 转换为数据库字段格式（小写蛇形命名）
+type DbUserModel = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string, false>]: UserRequest[K]
+};
+// 结果：{ first_name: string; last_name: string; email_address: string; }
+
+// 环境变量配置
+interface AppConfig {
+  databaseUrl: string;
+  apiKey: string;
+  maxConnections: number;
+}
+
+type EnvVars = {
+  [K in keyof AppConfig as Camel2SnakeCase<K & string>]: string
+};
+// 结果：{ DATABASE_URL: string; API_KEY: string; MAX_CONNECTIONS: string; }
+
+// 类型安全的转换函数
+function toSnakeCase<T extends Record<string, unknown>>(
+  obj: T,
+  uppercase = false
+): { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] } {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter =>
+      `_${uppercase ? letter : letter.toLowerCase()}`
+    );
+    result[snakeKey] = obj[key];
+  }
+
+  return result as { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] };
+}
+
+const userData: UserRequest = {
+  firstName: '张三',
+  lastName: '李',
+  emailAddress: 'zhangsan@example.com'
+};
+
+const dbRecord = toSnakeCase(userData);
+// TypeScript 确保类型安全
+console.log(dbRecord.first_name); // ✅ 正确
+// console.log(dbRecord.firstName); // ❌ 错误：属性不存在
 ```
 
 ## 📝 贡献指南

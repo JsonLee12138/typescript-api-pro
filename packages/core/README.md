@@ -1,9 +1,21 @@
 # Typescript API 参考
+
 [English Document](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.en.md)
 
-## Types
+## 📚 类型工具库
+
+TypeScript API Pro 提供了一套完整的类型工具，按功能分为以下几类：
+
+- [Object Types](#object-types) - 对象类型工具
+- [Array Types](#array-types) - 数组类型工具
+- [Map Types](#map-types) - Map 类型工具
+- [Set Types](#set-types) - Set 类型工具
+- [String Types](#string-types) - 字符串类型工具
+
+## Object Types
 
 ### PropertyKey
+
 用于表示对象属性键的联合类型。
 
 ```typescript
@@ -11,17 +23,20 @@ type PropertyKey = string | number | symbol;
 ```
 
 #### Description
+
 - 包含了 JavaScript 中所有可能的对象属性键类型
 - 等同于 TypeScript 内置的 `PropertyKey` 类型
 
 #### Example
+
 ```typescript
-const strKey: PropertyKey = 'name';     // string key
-const numKey: PropertyKey = 42;         // number key
-const symKey: PropertyKey = Symbol();   // symbol key
+const strKey: PropertyKey = 'name'; // string key
+const numKey: PropertyKey = 42; // number key
+const symKey: PropertyKey = Symbol(); // symbol key
 ```
 
 ### AnyObject<T = any>
+
 创建一个键为 `PropertyKey`，值类型为泛型 `T` 的对象类型。
 
 ```typescript
@@ -29,10 +44,12 @@ type AnyObject<T = any> = Record<PropertyKey, T>;
 ```
 
 #### Description
+
 - 泛型参数 `T` 定义对象值的类型，默认为 `any`
 - 对象的键可以是任意 `PropertyKey` 类型
 
 #### Example
+
 ```typescript
 // 所有值都是字符串的对象
 const strObject: AnyObject<string> = {
@@ -50,24 +67,28 @@ const numObject: AnyObject<number> = {
 ```
 
 ### RequiredDependency<T, K, D>
+
 创建一个类型，其中某些属性必须同时存在或同时不存在。
 
 ```typescript
-type RequiredDependency<T, K extends keyof T, D extends keyof T> =
-  Omit<T, D> & (Partial<{ [P in K | D]: never }> | Required<Pick<T, K | D>>);
+type RequiredDependency<T, K extends keyof T, D extends keyof T>
+  = Omit<T, D> & (Partial<{ [P in K | D]: never }> | Required<Pick<T, K | D>>);
 ```
 
 #### Type Parameters
+
 - `T`: 基础对象类型
 - `K`: 键属性（key property）
 - `D`: 依赖属性（dependent property）
 
 #### Description
+
 - 确保当存在键属性 `K` 时，依赖属性 `D` 必须同时存在
 - 如果不提供键属性 `K`，则依赖属性 `D` 也不能提供
 - 用于处理属性之间的依赖关系
 
 #### Example
+
 ```typescript
 interface Config {
   name: string;
@@ -93,31 +114,34 @@ const config2: ServerConfig = {
 // ❌ 错误：不能只提供 host 而不提供 port
 const config3: ServerConfig = {
   name: 'server3',
-  host: 'localhost'  // Error
+  host: 'localhost' // Error
 };
 
 // ❌ 错误：不能只提供 port 而不提供 host
 const config4: ServerConfig = {
   name: 'server4',
-  port: 8080  // Error
+  port: 8080 // Error
 };
 ```
 
 ### MutuallyWithObject<T>
+
 创建一个互斥对象类型，其中只能包含基础类型 T 中的一个属性。
 
 ```typescript
 type MutuallyWithObject<T extends AnyObject> = {
   [K in keyof T]: { [P in K]: T[K] } & { [P in Exclude<keyof T, K>]?: never };
-}[keyof T]
+}[keyof T];
 ```
 
 #### Description
+
 - 确保对象中只能存在一个指定属性
 - 非常适合表示互斥选项的场景
 - 每个属性的类型保持与原始类型 T 中相同
 
 #### Example
+
 ```typescript
 interface LoginOptions {
   username: string;
@@ -146,11 +170,12 @@ const login3: LoginMethod = {
 // ❌ 错误：不能同时提供多个属性
 const login4: LoginMethod = {
   username: 'user123',
-  email: 'user@example.com'  // Error
+  email: 'user@example.com' // Error
 };
 ```
 
 ### Mutually<T, K, O>
+
 创建一个联合类型，其中要么不包含 K 属性，要么不包含 O 属性。
 
 ```typescript
@@ -158,16 +183,19 @@ type Mutually<T extends AnyObject, K extends keyof T, O extends keyof T> = Omit<
 ```
 
 #### Type Parameters
+
 - `T`: 基础对象类型
 - `K`: 第一个互斥属性
 - `O`: 第二个互斥属性
 
 #### Description
+
 - 确保两个属性不能同时存在于对象中
 - 与 MutuallyWithObject 不同，它允许其他属性同时存在
 - 适合处理两个特定属性之间的互斥关系
 
 #### Example
+
 ```typescript
 interface FormData {
   name: string;
@@ -204,11 +232,12 @@ const data4: IdentityFormData = {
   name: '赵六',
   age: 35,
   personalId: '110101199001011234',
-  passportNumber: 'G12345678'  // Error
+  passportNumber: 'G12345678' // Error
 };
 ```
 
 ### Generic<R, K, T>
+
 创建一个新类型，继承基础类型 R 的所有属性，但将某个特定属性 K 的类型重写为 T。
 
 ```typescript
@@ -216,16 +245,19 @@ type Generic<R extends AnyObject, K extends keyof R, T> = Omit<R, K> & { [P in K
 ```
 
 #### Type Parameters
+
 - `R`: 基础对象类型
 - `K`: 需要重写类型的属性键
 - `T`: 新的属性类型
 
 #### Description
+
 - 保留原始类型的所有属性
 - 仅替换指定属性的类型
 - 适用于扩展或特化现有类型
 
 #### Example
+
 ```typescript
 interface User {
   id: number;
@@ -254,22 +286,26 @@ const user: EnhancedUser = {
 ```
 
 ### OmitByObject<T, U>
+
 从类型 T 中排除所有与类型 U 有相同键名的属性。
 
 ```typescript
-type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>
+type OmitByObject<T, U> = Pick<T, Exclude<keyof T, keyof U>>;
 ```
 
 #### Type Parameters
+
 - `T`: 源对象类型
 - `U`: 包含要排除键的对象类型
 
 #### Description
+
 - 根据另一个对象类型的键来排除源对象中的属性
 - 比标准的 `Omit` 更灵活，可以基于整个对象类型的结构来排除属性
 - 适用于需要从一个对象中剔除另一个对象结构的场景
 
 #### Example
+
 ```typescript
 interface Person {
   name: string;
@@ -319,7 +355,10 @@ const productData: ProductData = {
 };
 ```
 
+## Array Types
+
 ### ArrayItem<T>
+
 从数组类型中提取元素类型的工具类型。
 
 ```typescript
@@ -327,14 +366,17 @@ export type ArrayItem<T extends any[]> = T[number];
 ```
 
 #### Type Parameters
+
 - `T`: 任意数组类型
 
 #### Description
+
 - 使用索引访问类型 `T[number]` 从数组类型中提取元素类型
 - 可用于获取数组、元组或只读数组的元素类型
 - 在处理泛型数组时特别有用,可以保留元素的具体类型信息
 
 #### Example
+
 ```typescript
 // 简单数组类型
 type NumberArray = number[];
@@ -368,6 +410,7 @@ processUser(users[0]); // 正确: 类型匹配
 ```
 
 ### ValueOf<T>
+
 从对象类型中提取所有属性值的联合类型。
 
 ```typescript
@@ -375,13 +418,16 @@ type ValueOf<T> = T[keyof T];
 ```
 
 #### Type Parameters
+
 - `T`: 任意对象类型
 
 #### Description
+
 - 获取对象所有属性值的联合类型
 - 常用于类型映射、类型推导等场景
 
 #### Example
+
 ```typescript
 interface StatusMap {
   success: 200;
@@ -392,6 +438,7 @@ type StatusCode = ValueOf<StatusMap>; // 200 | 404 | 500
 ```
 
 ### KeyOf<T>
+
 获取对象所有属性键的联合类型。
 
 ```typescript
@@ -399,13 +446,16 @@ type KeyOf<T> = keyof T;
 ```
 
 #### Type Parameters
+
 - `T`: 任意对象类型
 
 #### Description
+
 - 等价于 TypeScript 内置的 `keyof` 操作符
 - 用于获取对象所有属性名的联合类型
 
 #### Example
+
 ```typescript
 interface User {
   id: number;
@@ -415,7 +465,10 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+## Map Types
+
 ### MapKeyOf<T>
+
 从 Map 类型中提取键类型。
 
 ```typescript
@@ -423,14 +476,17 @@ type MapKeyOf<T extends Map<unknown, unknown>> = T extends Map<infer K, unknown>
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Map 类型
 
 #### Description
+
 - 使用条件类型和 infer 关键字从 Map 类型中提取键的类型
 - 返回 Map 中所有可能键的联合类型
 - 如果传入的不是 Map 类型，则返回 `never`
 
 #### Example
+
 ```typescript
 // 基础用法
 type StringNumberMap = Map<string, number>;
@@ -446,6 +502,7 @@ type LiteralKeys = MapKeyOf<LiteralMap>; // 'name' | 'age'
 ```
 
 ### MapValueOf<T>
+
 从 Map 类型中提取值类型。
 
 ```typescript
@@ -453,13 +510,16 @@ type MapValueOf<T extends Map<unknown, unknown>> = T extends Map<unknown, infer 
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Map 类型
 
 #### Description
+
 - 从 Map 类型中提取值的类型
 - 返回 Map 中所有可能值的联合类型
 
 #### Example
+
 ```typescript
 // 基础用法
 type StringNumberMap = Map<string, number>;
@@ -479,27 +539,31 @@ type UserValue = MapValueOf<UserMap>; // User
 ```
 
 ### MapToObject<T>
+
 将 Map 类型转换为对象类型。
 
 ```typescript
 type MapToObject<T extends Map<unknown, unknown>> = {
-    [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
-}
+  [K in MapKeyOf<T> & PropertyKey]: T extends Map<unknown, infer V> ? V : never;
+};
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Map 类型
 
 #### Description
+
 - 将 Map 类型转换为等价的对象类型
 - 只有当 Map 的键类型是 PropertyKey`（string | number | symbol）`的子集时才能正确转换
 - 保持键值对应关系不变
 
 #### Example
+
 ```typescript
 // 字符串键的 Map
 type StringMap = Map<'name' | 'age', string>;
-type StringObject = MapToObject<StringMap>; 
+type StringObject = MapToObject<StringMap>;
 // { name: string; age: string; }
 
 // 数字键的 Map
@@ -519,6 +583,7 @@ type UserObject = MapToObject<typeof userMap>;
 ```
 
 ### ObjectToMap<T>
+
 将对象型转换为Map类型。
 
 ```typescript
@@ -526,13 +591,16 @@ type ObjectToMap<T extends AnyObject> = Map<keyof T, T[keyof T]>;
 ```
 
 #### Type Parameters
+
 - `T` : 任意继承自 `AnyObject` 的对象类型
 
 #### Description
+
 - 将对象类型转换为等价的 Map 类型
 - 对象的键成为 Map 的键类型，对象的值成为 Map 的值类型
 
 #### Example
+
 ```typescript
 // 基础对象转换
 interface User {
@@ -552,24 +620,29 @@ interface Config {
 type ConfigMap = ObjectToMap<Config>;
 // Map<'host' | 'port' | 'ssl', string | number | boolean>
 ```
+
 ### OmitMapKey<T, K>
+
 从 Map 类型中排除指定键的。
 
 ```typescript
-type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
-  T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>>
+  = T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
 #### Type Parameters
+
 - `T` : 继承自 AnyObject 的对象类型
 - `K` : 要排除的键，必须是 T 中存在的键类型
 
 #### Description
+
 - 创建一个新的 Map 类型，排除指定的键
 - 保持值类型不变，只移除指定的键类型
 - 类似于对象类型的 Omit 工具类型
 
 #### Example
+
 ```typescript
 // 排除单个键
 type OriginalMap = Map<'name' | 'age' | 'email', string>;
@@ -582,23 +655,27 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 ```
 
 ### PickMapKey<T, K>
+
 从 Map 类型中选择指定键的。
 
 ```typescript
-export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
-  T extends Map<unknown, infer V> ? Map<K, V> : never;
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>>
+  = T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
 #### Type Parameters
+
 - `T` : 继承自 `AnyObject` 的对象类型
 - `K` : 要排除的键，必须是 `T` 中存在的键类型
 
 #### Description
+
 - 创建一个新的 Map 类型，只包含指定的键
 - 保持值类型不变，只保留指定的键类型
 - 类似于对象类型的 Pick 工具类型
 
 #### Example
+
 ```typescript
 // 选择单个键
 type OriginalMap = Map<'name' | 'age' | 'email', string>;
@@ -610,23 +687,29 @@ type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 // Map<'name' | 'age', string>
 ```
 
+## Set Types
+
 ### SetValueOf<T>
+
 从 Set 类型中提取元素类型。
 
 ```typescript
-type SetValueOf<T extends ReadonlySet<unknown>> = 
-  T extends ReadonlySet<infer V> ? V : never;
+type SetValueOf<T extends ReadonlySet<unknown>>
+  = T extends ReadonlySet<infer V> ? V : never;
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Set 类型
 
 #### Description
+
 - 使用条件类型和 infer 关键字从 Set 类型中提取元素类型
 - 返回 Set 中所有可能元素的联合类型
 - 如果传入的不是 Set 类型，则返回 never
 
 #### Example
+
 ```typescript
 // 基础用法
 type StringSet = Set<string>;
@@ -650,23 +733,27 @@ type UserElement = SetValueOf<UserSet>; // User
 ```
 
 ### OmitSetValue<T, V>
+
 从 Set 类型中排除指定值的。
 
 ```typescript
-type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
-  T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>>
+  = T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Set 类型
 - `V` : 要排除的值，必须是 T 中存在的元素类型
 
 #### Description
+
 - 创建一个新的 Set 类型，排除指定的元素类型
 - 使用 Exclude 工具类型从联合类型中移除指定类型
 - 适用于需要从 Set 中移除特定元素类型的场景
 
 #### Example
+
 ```typescript
 // 排除单个值类型
 type OriginalSet = Set<'apple' | 'banana' | 'orange'>;
@@ -684,6 +771,7 @@ type WithoutOddNumbers = OmitSetValue<NumberSet, 1 | 3 | 5>;
 ```
 
 ### PickSetValue<T, V>
+
 从 Set 类型中选择指定值的。
 
 ```typescript
@@ -691,15 +779,18 @@ type PickSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = Set<V>;
 ```
 
 #### Type Parameters
+
 - `T` : 任意 Set 类型
 - `V` : 要排除的值，必须是 T 中存在的元素类型
 
 #### Description
+
 - 创建一个新的 Set 类型，只包含指定的元素类型
 - 直接使用指定的值类型创建新的 Set
 - 适用于需要从 Set 中提取特定元素类型的场景
 
 #### Example
+
 ```typescript
 // 选择单个值类型
 type OriginalSet = Set<'red' | 'green' | 'blue' | 'yellow'>;
@@ -713,6 +804,7 @@ type EvenNumbers = PickSetValue<NumberSet, 2 | 4>;
 ```
 
 ### ArrayToSet<T>
+
 将数组类型转换为 Set 类型的。
 
 ```typescript
@@ -720,14 +812,17 @@ type ArrayToSet<T extends readonly unknown[]> = Set<T[number]>;
 ```
 
 #### Type Parameters
+
 - `T` : 任意数组类型
 
 #### Description
+
 - 将数组类型转换为等价的 Set 类型
 - 使用索引访问类型 `T[number]` 获取数组元素类型
 - Set 会自动去重，所以重复的元素类型只会出现一次
 
 #### Example
+
 ```typescript
 // 基础数组转换
 type StringArray = string[];
@@ -748,6 +843,7 @@ type FruitSet = ArrayToSet<typeof fruits>;
 ```
 
 ### SetToArray<T>
+
 将 Set 类型转换为数组类型的。
 
 ```typescript
@@ -755,13 +851,16 @@ type SetToArray<T extends ReadonlySet<unknown>> = SetValueOf<T>[];
 ```
 
 #### Type Parameters
+
 - `T` : 任意数组类型
 
 #### Description
+
 - 将 Set 类型转换为等价的数组类型
 - 使用 SetValueOf 提取 Set 的元素类型，然后创建数组类型
 
 #### Example
+
 ```typescript
 // 基础 Set 转换
 type StringSet = Set<string>;
@@ -785,7 +884,102 @@ function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
 }
 ```
 
+## String Types
+
+### Camel2SnakeCase<T, U>
+
+将驼峰命名字符串转换为蛇形命名格式。
+
+```typescript
+type Camel2SnakeCase<T extends string, U extends boolean = true> = /* ... */
+```
+
+#### Type Parameters
+
+- `T` : 要转换的驼峰命名字符串
+- `U` : 是否使用大写（默认：`true`）
+
+#### Description
+
+- 将驼峰命名（camelCase）转换为蛇形命名（snake_case）
+- 可选择转换为大写蛇形命名（UPPER_SNAKE_CASE）或小写蛇形命名（lower_snake_case）
+- 在类型级别进行转换，零运行时开销
+- 适用于 API 请求/响应、数据库字段、环境变量等命名转换场景
+
+#### Example
+
+```typescript
+// 转换为大写蛇形命名（默认）
+type Result1 = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+type Result2 = Camel2SnakeCase<'userId'>; // 'USER_ID'
+type Result3 = Camel2SnakeCase<'myVariableName'>; // 'MY_VARIABLE_NAME'
+
+// 转换为小写蛇形命名
+type Result4 = Camel2SnakeCase<'userName', false>; // 'user_name'
+type Result5 = Camel2SnakeCase<'userId', false>; // 'user_id'
+type Result6 = Camel2SnakeCase<'myVariableName', false>; // 'my_variable_name'
+
+// 实际应用：API 请求对象转换
+interface UserRequest {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+}
+
+// 转换为后端 API 格式（大写蛇形命名）
+type ApiUserRequest = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string>]: UserRequest[K]
+};
+// 结果：{ FIRST_NAME: string; LAST_NAME: string; EMAIL_ADDRESS: string; }
+
+// 转换为数据库字段格式（小写蛇形命名）
+type DbUserModel = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string, false>]: UserRequest[K]
+};
+// 结果：{ first_name: string; last_name: string; email_address: string; }
+
+// 环境变量配置
+interface AppConfig {
+  databaseUrl: string;
+  apiKey: string;
+  maxConnections: number;
+}
+
+type EnvVars = {
+  [K in keyof AppConfig as Camel2SnakeCase<K & string>]: string
+};
+// 结果：{ DATABASE_URL: string; API_KEY: string; MAX_CONNECTIONS: string; }
+
+// 类型安全的转换函数
+function toSnakeCase<T extends Record<string, unknown>>(
+  obj: T,
+  uppercase = false
+): { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] } {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter =>
+      `_${uppercase ? letter : letter.toLowerCase()}`);
+    result[snakeKey] = obj[key];
+  }
+
+  return result as { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] };
+}
+
+const userData: UserRequest = {
+  firstName: '张三',
+  lastName: '李',
+  emailAddress: 'zhangsan@example.com'
+};
+
+const dbRecord = toSnakeCase(userData);
+// TypeScript 确保类型安全
+console.log(dbRecord.first_name); // ✅ 正确
+// console.log(dbRecord.firstName); // ❌ 错误：属性不存在
+```
+
 ## 📝 贡献指南
+
 欢迎提交`issue`或`pull request`，共同完善`Hook-Fetch`。
 
 ## 📄 许可证

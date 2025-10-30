@@ -13,7 +13,8 @@ typescript-api-pro/
 ├── object/     # 对象类型工具
 ├── array/      # 数组类型工具
 ├── map/        # Map 类型工具
-└── set/        # Set 类型工具
+├── set/        # Set 类型工具
+└── string/     # 字符串类型工具
 ```
 
 ## 🔧 核心类型
@@ -56,6 +57,10 @@ typescript-api-pro/
 - [`PickSetValue<T, V>`](../set-types#picksetvalue) - 选择 Set 值
 - [`ArrayToSet<T>`](../set-types#arraytoset) - 数组转 Set
 - [`SetToArray<T>`](../set-types#settoarray) - Set 转数组
+
+### 字符串操作
+
+- [`Camel2SnakeCase<T, U>`](../string-types#camel2snakecase) - 驼峰命名转蛇形命名
 
 ## 🎯 使用场景
 
@@ -101,6 +106,18 @@ type UniqueColors = ArrayToSet<['red', 'blue', 'red', 'green']>; // Set<'red' | 
 type ConfigObject = MapToObject<Map<'host' | 'port', string>>; // { host: string; port: string; }
 ```
 
+### 字符串转换
+
+```typescript
+import type { Camel2SnakeCase } from 'typescript-api-pro';
+
+// 驼峰命名转大写蛇形命名
+type SnakeCaseKey = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+
+// 转换为小写蛇形命名
+type LowerSnakeCase = Camel2SnakeCase<'userId', false>; // 'user_id'
+```
+
 ## 📖 了解更多
 
 选择特定的类型分类来了解更多详细信息和使用示例：
@@ -109,3 +126,4 @@ type ConfigObject = MapToObject<Map<'host' | 'port', string>>; // { host: string
 - [数组类型工具](../array-types)
 - [Map 类型工具](../map-types)
 - [Set 类型工具](../set-types)
+- [字符串类型工具](../string-types)

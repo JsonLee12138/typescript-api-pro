@@ -1,7 +1,17 @@
 # Typescript API Reference
 [中文文档](https://github.com/JsonLee12138/typescript-api-pro/blob/main/README.md)
 
-## Types
+## 📚 Type Utilities
+
+TypeScript API Pro provides a complete set of type utilities organized into the following categories:
+
+- [Object Types](#object-types) - Object type utilities
+- [Array Types](#array-types) - Array type utilities
+- [Map Types](#map-types) - Map type utilities
+- [Set Types](#set-types) - Set type utilities
+- [String Types](#string-types) - String type utilities
+
+## Object Types
 
 ### PropertyKey
 A union type representing all possible object property key types in JavaScript.
@@ -320,6 +330,8 @@ const productData: ProductData = {
 };
 ```
 
+## Array Types
+
 ### ArrayItem<T>
 A utility type that extracts the element type from an array type.
 
@@ -407,6 +419,8 @@ interface User {
 type UserKeys = KeyOf<User>; // "id" | "name" | "age"
 ```
 
+## Map Types
+
 ### MapKeyOf<T>
 Extracts the key type from a Map type.
 
@@ -491,7 +505,7 @@ type MapToObject<T extends Map<unknown, unknown>> = {
 ```typescript
 // String key Map
 type StringMap = Map<'name' | 'age', string>;
-type StringObject = MapToObject<StringMap>; 
+type StringObject = MapToObject<StringMap>;
 // { name: string; age: string; }
 
 // Numeric key Map
@@ -549,7 +563,7 @@ type ConfigMap = ObjectToMap<Config>;
 Creates a new Map type excluding specified keys.
 
 ```typescript
-type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+type OmitMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> =
   T extends Map<infer Keys, infer V> ? Map<Exclude<Keys, K>, V> : never;
 ```
 
@@ -578,7 +592,7 @@ type WithoutNameAndAge = OmitMapKey<OriginalMap, 'name' | 'age'>;
 Creates a new Map type including only specified keys.
 
 ```typescript
-export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> = 
+export type PickMapKey<T extends Map<unknown, unknown>, K extends MapKeyOf<T>> =
   T extends Map<unknown, infer V> ? Map<K, V> : never;
 ```
 
@@ -602,6 +616,8 @@ type OnlyName = PickMapKey<OriginalMap, 'name'>;
 type NameAndAge = PickMapKey<OriginalMap, 'name' | 'age'>;
 // Map<'name' | 'age', string>
 ```
+
+## Set Types
 
 ### SetValueOf<T>
 Extracts the element type from a Set type.
@@ -645,7 +661,7 @@ type UserElement = SetValueOf<UserSet>; // User
 Creates a new Set type excluding specified value types.
 
 ```typescript
-type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> = 
+type OmitSetValue<T extends Set<unknown>, V extends SetValueOf<T>> =
   T extends Set<infer Values> ? Set<Exclude<Values, V>> : never;
 ```
 
@@ -776,6 +792,97 @@ type UserArray = SetToArray<UserSet>; // User[]
 function convertSetToArray<T extends Set<any>>(set: T): SetToArray<T> {
   return Array.from(set) as SetToArray<T>;
 }
+```
+
+## String Types
+
+### Camel2SnakeCase<T, U>
+Converts camelCase strings to snake_case format.
+
+```typescript
+type Camel2SnakeCase<T extends string, U extends boolean = true> = /* ... */
+```
+
+#### Type Parameters
+- `T`: The camelCase string to convert
+- `U`: Whether to use uppercase (default: `true`)
+
+#### Description
+- Converts camelCase to snake_case format
+- Optionally converts to UPPER_SNAKE_CASE or lower_snake_case
+- Type-level transformation with zero runtime overhead
+- Useful for API requests/responses, database fields, environment variables, and other naming convention conversions
+
+#### Example
+```typescript
+// Convert to UPPER_SNAKE_CASE (default)
+type Result1 = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+type Result2 = Camel2SnakeCase<'userId'>; // 'USER_ID'
+type Result3 = Camel2SnakeCase<'myVariableName'>; // 'MY_VARIABLE_NAME'
+
+// Convert to lowercase snake_case
+type Result4 = Camel2SnakeCase<'userName', false>; // 'user_name'
+type Result5 = Camel2SnakeCase<'userId', false>; // 'user_id'
+type Result6 = Camel2SnakeCase<'myVariableName', false>; // 'my_variable_name'
+
+// Practical use: API request object conversion
+interface UserRequest {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+}
+
+// Convert to backend API format (UPPER_SNAKE_CASE)
+type ApiUserRequest = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string>]: UserRequest[K]
+};
+// Result: { FIRST_NAME: string; LAST_NAME: string; EMAIL_ADDRESS: string; }
+
+// Convert to database field format (lower_snake_case)
+type DbUserModel = {
+  [K in keyof UserRequest as Camel2SnakeCase<K & string, false>]: UserRequest[K]
+};
+// Result: { first_name: string; last_name: string; email_address: string; }
+
+// Environment variable configuration
+interface AppConfig {
+  databaseUrl: string;
+  apiKey: string;
+  maxConnections: number;
+}
+
+type EnvVars = {
+  [K in keyof AppConfig as Camel2SnakeCase<K & string>]: string
+};
+// Result: { DATABASE_URL: string; API_KEY: string; MAX_CONNECTIONS: string; }
+
+// Type-safe conversion function
+function toSnakeCase<T extends Record<string, unknown>>(
+  obj: T,
+  uppercase = false
+): { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] } {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter =>
+      `_${uppercase ? letter : letter.toLowerCase()}`
+    );
+    result[snakeKey] = obj[key];
+  }
+
+  return result as { [K in keyof T as Camel2SnakeCase<K & string, false>]: T[K] };
+}
+
+const userData: UserRequest = {
+  firstName: 'John',
+  lastName: 'Doe',
+  emailAddress: 'john@example.com'
+};
+
+const dbRecord = toSnakeCase(userData);
+// TypeScript ensures type safety
+console.log(dbRecord.first_name); // ✅ Valid
+// console.log(dbRecord.firstName); // ❌ Error: Property does not exist
 ```
 
 ## 📝 Contribution Guide

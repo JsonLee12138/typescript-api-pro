@@ -13,7 +13,8 @@ typescript-api-pro/
 ├── object/     # Object type utilities
 ├── array/      # Array type utilities
 ├── map/        # Map type utilities
-└── set/        # Set type utilities
+├── set/        # Set type utilities
+└── string/     # String type utilities
 ```
 
 ## 🔧 Core Types
@@ -56,6 +57,10 @@ typescript-api-pro/
 - [`PickSetValue<T, V>`](../set-types#picksetvalue) - Select Set values
 - [`ArrayToSet<T>`](../set-types#arraytoset) - Convert array to Set
 - [`SetToArray<T>`](../set-types#settoarray) - Convert Set to array
+
+### String Operations
+
+- [`Camel2SnakeCase<T, U>`](../string-types#camel2snakecase) - Convert camelCase to snake_case
 
 ## 🎯 Use Cases
 
@@ -101,6 +106,18 @@ type UniqueColors = ArrayToSet<['red', 'blue', 'red', 'green']>; // Set<'red' | 
 type ConfigObject = MapToObject<Map<'host' | 'port', string>>; // { host: string; port: string; }
 ```
 
+### String Transformation
+
+```typescript
+import type { Camel2SnakeCase } from 'typescript-api-pro';
+
+// Convert camelCase to UPPER_SNAKE_CASE
+type SnakeCaseKey = Camel2SnakeCase<'userName'>; // 'USER_NAME'
+
+// Convert to lowercase snake_case
+type LowerSnakeCase = Camel2SnakeCase<'userId', false>; // 'user_id'
+```
+
 ## 📖 Learn More
 
 Choose a specific type category to learn more details and usage examples:
@@ -109,3 +126,4 @@ Choose a specific type category to learn more details and usage examples:
 - [Array Type Utilities](../array-types)
 - [Map Type Utilities](../map-types)
 - [Set Type Utilities](../set-types)
+- [String Type Utilities](../string-types)
